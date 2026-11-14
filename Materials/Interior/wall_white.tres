@@ -1,0 +1,18 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://Materials/Interior/plate_albedo.res" id="1_q6qaq"]
+[ext_resource type="Texture2D" path="res://Materials/Interior/plate_normal.res" id="2_jmrjp"]
+
+[resource]
+albedo_color = Color(0.9, 0.91, 0.93, 1)
+albedo_texture = ExtResource("1_q6qaq")
+metallic = 0.35
+metallic_specular = 0.6
+roughness = 0.28
+normal_enabled = true
+normal_texture = ExtResource("2_jmrjp")
+uv1_scale = Vector3(0.28, 0.28, 0.28)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 6.0
+uv1_world_triplanar = true
+texture_filter = 5

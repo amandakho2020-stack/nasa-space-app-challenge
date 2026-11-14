@@ -1,0 +1,18 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://Materials/Interior/deck_albedo.res" id="1_svl4e"]
+[ext_resource type="Texture2D" path="res://Materials/Interior/deck_normal.res" id="2_yian8"]
+
+[resource]
+albedo_color = Color(0.34, 0.35, 0.38, 1)
+albedo_texture = ExtResource("1_svl4e")
+metallic = 0.7
+metallic_specular = 0.6
+roughness = 0.42
+normal_enabled = true
+normal_texture = ExtResource("2_yian8")
+uv1_scale = Vector3(0.3, 0.3, 0.3)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 6.0
+uv1_world_triplanar = true
+texture_filter = 5

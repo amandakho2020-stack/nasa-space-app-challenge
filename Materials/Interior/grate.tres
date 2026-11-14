@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://Materials/Interior/grate_albedo.res" id="1_4e3rk"]
+[ext_resource type="Texture2D" path="res://Materials/Interior/grate_normal.res" id="2_8cjil"]
+
+[resource]
+albedo_color = Color(0.42, 0.44, 0.47, 1)
+albedo_texture = ExtResource("1_4e3rk")
+metallic = 0.8
+metallic_specular = 0.6
+roughness = 0.45
+normal_enabled = true
+normal_texture = ExtResource("2_8cjil")
+uv1_triplanar = true
+uv1_triplanar_sharpness = 6.0
+uv1_world_triplanar = true
+texture_filter = 5

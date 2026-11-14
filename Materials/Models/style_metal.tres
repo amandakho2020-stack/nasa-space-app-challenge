@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Material" path="res://Materials/Models/style_outline.tres" id="1_qqkj3"]
+
+[resource]
+next_pass = ExtResource("1_qqkj3")
+vertex_color_use_as_albedo = true
+vertex_color_is_srgb = true
+metallic = 0.25
+metallic_specular = 0.6
+roughness = 0.45

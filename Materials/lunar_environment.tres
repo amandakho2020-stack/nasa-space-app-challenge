@@ -1,0 +1,44 @@
+[gd_resource type="Environment" format=3 uid="uid://coqdh6x1bdvqp"]
+
+[ext_resource type="Shader" uid="uid://cgt4gr3tqhqes" path="res://Shaders/space_sky.gdshader" id="1_y4arl"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_y4arl"]
+seed = 1976
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_dhsbt"]
+noise = SubResource("FastNoiseLite_y4arl")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5cfls"]
+shader = ExtResource("1_y4arl")
+shader_parameter/star_density = 0.12
+shader_parameter/star_grid = 160.0
+shader_parameter/star_size = 0.12
+shader_parameter/star_brightness = 2.5
+shader_parameter/band_noise = SubResource("NoiseTexture2D_dhsbt")
+shader_parameter/band_strength = 0.07
+shader_parameter/band_axis = Vector3(0.3, 0.8, 0.52)
+shader_parameter/sun_disk_degrees = 0.6
+shader_parameter/sun_disk_energy = 16.0
+shader_parameter/sun_glare = 0.8
+
+[sub_resource type="Sky" id="Sky_l4hiq"]
+sky_material = SubResource("ShaderMaterial_5cfls")
+radiance_size = 0
+
+[resource]
+background_mode = 2
+sky = SubResource("Sky_l4hiq")
+ambient_light_source = 2
+ambient_light_color = Color(0.11, 0.11, 0.125, 1)
+reflected_light_source = 2
+tonemap_mode = 3
+ssao_enabled = true
+ssao_radius = 1.2
+ssao_intensity = 1.6
+ssil_enabled = true
+ssil_radius = 4.0
+ssil_intensity = 1.1
+glow_enabled = true
+glow_intensity = 0.5
+glow_hdr_threshold = 2.5

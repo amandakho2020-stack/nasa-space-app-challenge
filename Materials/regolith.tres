@@ -1,0 +1,73 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://c8i2x3m6fajta"]
+
+[sub_resource type="Gradient" id="Gradient_g0tvu"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.24000001, 0.24000001, 0.24000001, 1, 0.3529412, 0.3529412, 0.3529412, 1, 0.49529412, 0.49529412, 0.49529412, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_5mgqr"]
+seed = 1969
+frequency = 0.006
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_uqw15"]
+width = 1024
+height = 1024
+noise = SubResource("FastNoiseLite_5mgqr")
+color_ramp = SubResource("Gradient_g0tvu")
+seamless = true
+
+[sub_resource type="Gradient" id="Gradient_kmoke"]
+colors = PackedColorArray(0.72, 0.72, 0.72, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_fklv7"]
+seed = 1970
+frequency = 0.09
+fractal_octaves = 3
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_isue7"]
+noise = SubResource("FastNoiseLite_fklv7")
+color_ramp = SubResource("Gradient_kmoke")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_d2msj"]
+noise_type = 2
+seed = 1972
+frequency = 0.012
+fractal_type = 0
+cellular_distance_function = 1
+cellular_jitter = 0.9
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_mxwiu"]
+width = 1024
+height = 1024
+noise = SubResource("FastNoiseLite_d2msj")
+seamless = true
+as_normal_map = true
+bump_strength = 3.5
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_r3jnm"]
+seed = 1971
+frequency = 0.02
+fractal_octaves = 7
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_05jb0"]
+width = 1024
+height = 1024
+noise = SubResource("FastNoiseLite_r3jnm")
+seamless = true
+as_normal_map = true
+bump_strength = 10.0
+
+[resource]
+albedo_texture = SubResource("NoiseTexture2D_uqw15")
+metallic_specular = 0.0
+normal_enabled = true
+normal_texture = SubResource("NoiseTexture2D_05jb0")
+detail_enabled = true
+detail_blend_mode = 3
+detail_albedo = SubResource("NoiseTexture2D_isue7")
+detail_normal = SubResource("NoiseTexture2D_mxwiu")
+uv1_scale = Vector3(0.03, 0.03, 0.03)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 4.0
+uv1_world_triplanar = true
+texture_filter = 5

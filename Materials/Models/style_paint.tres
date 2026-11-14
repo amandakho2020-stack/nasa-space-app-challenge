@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Material" path="res://Materials/Models/style_outline.tres" id="1_nqepi"]
+
+[resource]
+next_pass = ExtResource("1_nqepi")
+vertex_color_use_as_albedo = true
+vertex_color_is_srgb = true
+metallic_specular = 0.35
+roughness = 0.85
