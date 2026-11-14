@@ -1,0 +1,9 @@
+<Project Sdk="Godot.NET.Sdk/4.7.2">
+  <!-- If your Godot version differs (e.g. 4.4 / 4.5), change the SDK version above to match,
+       or delete this file and use Project > Tools > C# > Create C# solution. -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <RootNamespace>LunarOutpost</RootNamespace>
+  </PropertyGroup>
+</Project>
