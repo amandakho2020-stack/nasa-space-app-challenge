@@ -135,6 +135,7 @@ public partial class ShieldOrbitTask : RoomTask
                     _meteors.Clear();
                     Sound(Sfx.Ding);
                     Pop(Ship + new Vector2(0, -150), "SHIELD STRONG!", Art.Green);
+                    return; // the list was just emptied: stop looping over it
                 }
                 continue;
             }
