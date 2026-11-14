@@ -1,0 +1,1192 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://AeroKidz/Scripts/LevelController.cs" id="1_lc"]
+[ext_resource type="Script" path="res://AeroKidz/Scripts/UIManager.cs" id="2_ui"]
+[ext_resource type="Script" path="res://AeroKidz/Scripts/BaseMap.cs" id="3_map"]
+[ext_resource type="Script" path="res://AeroKidz/Scripts/NovaPopup.cs" id="4_nova"]
+[ext_resource type="Script" path="res://AeroKidz/Scripts/HudIcon.cs" id="5_icon"]
+
+[sub_resource type="StyleBoxFlat" id="SB_Panel"]
+content_margin_left = 16.0
+content_margin_top = 8.0
+content_margin_right = 16.0
+content_margin_bottom = 8.0
+bg_color = Color(0.035, 0.07, 0.15, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.85, 1, 0.9)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0.3, 0.85, 1, 0.25)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="SB_BarBG_O2"]
+bg_color = Color(0.02, 0.05, 0.1, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.85, 1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="SB_BarFill_O2"]
+bg_color = Color(0.25, 0.85, 1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="SB_BarBG_Power"]
+bg_color = Color(0.02, 0.05, 0.1, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.68, 0.12, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="SB_BarFill_Power"]
+bg_color = Color(1, 0.68, 0.12, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="SB_BarBG_Shield"]
+bg_color = Color(0.02, 0.05, 0.1, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.85, 0.35, 1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="SB_BarFill_Shield"]
+bg_color = Color(0.85, 0.35, 1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="SB_FailCard"]
+content_margin_left = 32.0
+content_margin_top = 24.0
+content_margin_right = 32.0
+content_margin_bottom = 24.0
+bg_color = Color(0.1, 0.03, 0.05, 0.97)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.25, 0.2, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(1, 0.2, 0.15, 0.4)
+shadow_size = 14
+
+[sub_resource type="StyleBoxFlat" id="SB_OptB"]
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+bg_color = Color(0.1, 0.42, 0.92, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.55, 0.85, 1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="SB_OptB_Hover"]
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+bg_color = Color(0.2, 0.55, 1, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.75, 0.93, 1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0.3, 0.6, 1, 0.5)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="SB_OptA"]
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+bg_color = Color(1, 0.84, 0.15, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.9, 0.15, 0.1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="SB_OptA_Hover"]
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+bg_color = Color(1, 0.93, 0.45, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 0.3, 0.2, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(1, 0.84, 0.15, 0.5)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="SB_Mission"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+bg_color = Color(0.04, 0.12, 0.2, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.85, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="SB_Mission_Hover"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+bg_color = Color(0.08, 0.22, 0.34, 0.97)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.8, 0.2, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(1, 0.8, 0.2, 0.4)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="SB_OptGreen"]
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+bg_color = Color(0.1, 0.6, 0.3, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.55, 1, 0.65, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="SB_OptGreen_Hover"]
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+bg_color = Color(0.18, 0.75, 0.4, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.8, 1, 0.85, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0.3, 1, 0.5, 0.5)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="SB_AlertCard"]
+content_margin_left = 24.0
+content_margin_top = 18.0
+content_margin_right = 24.0
+content_margin_bottom = 20.0
+bg_color = Color(0.05, 0.1, 0.22, 0.97)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.3, 0.85, 1, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0.3, 0.85, 1, 0.35)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="SB_Speech"]
+content_margin_left = 16.0
+content_margin_top = 12.0
+content_margin_right = 16.0
+content_margin_bottom = 12.0
+bg_color = Color(0.96, 0.97, 1, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.05, 0.08, 0.15, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="SB_WinCard"]
+content_margin_left = 32.0
+content_margin_top = 24.0
+content_margin_right = 32.0
+content_margin_bottom = 24.0
+bg_color = Color(0.03, 0.1, 0.07, 0.97)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.3, 1, 0.5, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0.3, 1, 0.5, 0.35)
+shadow_size = 14
+
+[sub_resource type="StyleBoxFlat" id="SB_GoldCard"]
+content_margin_left = 32.0
+content_margin_top = 24.0
+content_margin_right = 32.0
+content_margin_bottom = 24.0
+bg_color = Color(0.1, 0.08, 0.02, 0.97)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.8, 0.2, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(1, 0.8, 0.2, 0.4)
+shadow_size = 16
+
+[sub_resource type="StyleBoxFlat" id="SB_HazardCard"]
+content_margin_left = 30.0
+content_margin_top = 22.0
+content_margin_right = 30.0
+content_margin_bottom = 26.0
+bg_color = Color(0.1, 0.04, 0.1, 0.98)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(1, 0.25, 0.2, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(1, 0.15, 0.1, 0.5)
+shadow_size = 24
+
+[sub_resource type="StyleBoxFlat" id="SB_DropPill"]
+content_margin_left = 26.0
+content_margin_top = 6.0
+content_margin_right = 26.0
+content_margin_bottom = 8.0
+bg_color = Color(0.85, 0.12, 0.1, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.75, 0.7, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+
+[node name="Main" type="Control" unique_id=1144411989]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="LevelController" type="Node" parent="." unique_id=233688161]
+unique_name_in_owner = true
+script = ExtResource("1_lc")
+
+[node name="MapLayer" type="Control" parent="." unique_id=1427274946]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_map")
+
+[node name="MinigameContainer" type="Control" parent="." unique_id=1046307044]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=816213048]
+script = ExtResource("2_ui")
+
+[node name="HUD" type="Control" parent="UI" unique_id=2077164735]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TopBar" type="PanelContainer" parent="UI/HUD" unique_id=1343796599]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -390.0
+offset_top = 8.0
+offset_right = 390.0
+offset_bottom = 72.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("SB_Panel")
+
+[node name="Bars" type="HBoxContainer" parent="UI/HUD/TopBar" unique_id=531726349]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 26
+
+[node name="OxygenGroup" type="VBoxContainer" parent="UI/HUD/TopBar/Bars" unique_id=687162349]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="OxygenHeader" type="HBoxContainer" parent="UI/HUD/TopBar/Bars/OxygenGroup" unique_id=424295339]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="OxygenIcon" type="Control" parent="UI/HUD/TopBar/Bars/OxygenGroup/OxygenHeader"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+script = ExtResource("5_icon")
+Kind = 1
+
+[node name="OxygenTitle" type="Label" parent="UI/HUD/TopBar/Bars/OxygenGroup/OxygenHeader" unique_id=661229158]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.4, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 17
+text = "OXYGEN"
+
+[node name="OxygenValue" type="Label" parent="UI/HUD/TopBar/Bars/OxygenGroup/OxygenHeader" unique_id=976293604]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.97, 1, 1)
+theme_override_font_sizes/font_size = 15
+text = "100%"
+
+[node name="OxygenBar" type="ProgressBar" parent="UI/HUD/TopBar/Bars/OxygenGroup" unique_id=112794096]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/background = SubResource("SB_BarBG_O2")
+theme_override_styles/fill = SubResource("SB_BarFill_O2")
+value = 100.0
+show_percentage = false
+
+[node name="PowerGroup" type="VBoxContainer" parent="UI/HUD/TopBar/Bars" unique_id=833093104]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="PowerHeader" type="HBoxContainer" parent="UI/HUD/TopBar/Bars/PowerGroup" unique_id=1098626116]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="PowerIcon" type="Control" parent="UI/HUD/TopBar/Bars/PowerGroup/PowerHeader"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+script = ExtResource("5_icon")
+Kind = 2
+
+[node name="PowerTitle" type="Label" parent="UI/HUD/TopBar/Bars/PowerGroup/PowerHeader" unique_id=1072407383]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.72, 0.2, 1)
+theme_override_font_sizes/font_size = 17
+text = "POWER"
+
+[node name="PowerValue" type="Label" parent="UI/HUD/TopBar/Bars/PowerGroup/PowerHeader" unique_id=1101952137]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.93, 0.8, 1)
+theme_override_font_sizes/font_size = 15
+text = "100%"
+
+[node name="PowerBar" type="ProgressBar" parent="UI/HUD/TopBar/Bars/PowerGroup" unique_id=1612306607]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/background = SubResource("SB_BarBG_Power")
+theme_override_styles/fill = SubResource("SB_BarFill_Power")
+value = 100.0
+show_percentage = false
+
+[node name="ShieldGroup" type="VBoxContainer" parent="UI/HUD/TopBar/Bars" unique_id=445911089]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="ShieldHeader" type="HBoxContainer" parent="UI/HUD/TopBar/Bars/ShieldGroup" unique_id=1527695965]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ShieldIcon" type="Control" parent="UI/HUD/TopBar/Bars/ShieldGroup/ShieldHeader"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+script = ExtResource("5_icon")
+Kind = 3
+
+[node name="ShieldTitle" type="Label" parent="UI/HUD/TopBar/Bars/ShieldGroup/ShieldHeader" unique_id=851796561]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.9, 0.45, 1, 1)
+theme_override_font_sizes/font_size = 17
+text = "SHIELD"
+
+[node name="ShieldValue" type="Label" parent="UI/HUD/TopBar/Bars/ShieldGroup/ShieldHeader" unique_id=2036472203]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.97, 0.88, 1, 1)
+theme_override_font_sizes/font_size = 15
+text = "100%"
+
+[node name="ShieldBar" type="ProgressBar" parent="UI/HUD/TopBar/Bars/ShieldGroup" unique_id=489719232]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/background = SubResource("SB_BarBG_Shield")
+theme_override_styles/fill = SubResource("SB_BarFill_Shield")
+value = 100.0
+show_percentage = false
+
+[node name="SciencePanel" type="PanelContainer" parent="UI/HUD" unique_id=1053609861]
+layout_mode = 1
+offset_left = 10.0
+offset_top = 8.0
+offset_right = 220.0
+offset_bottom = 52.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("SB_Panel")
+
+[node name="ScienceRow" type="HBoxContainer" parent="UI/HUD/SciencePanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="ScienceIcon" type="Control" parent="UI/HUD/SciencePanel/ScienceRow"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+script = ExtResource("5_icon")
+Kind = 0
+
+[node name="ScienceLabel" type="Label" parent="UI/HUD/SciencePanel/ScienceRow" unique_id=1761744887]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45, 1, 0.55, 1)
+theme_override_font_sizes/font_size = 18
+text = "SCIENCE: 0"
+vertical_alignment = 1
+
+[node name="DayPanel" type="PanelContainer" parent="UI/HUD" unique_id=10659180]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -250.0
+offset_top = 8.0
+offset_right = -10.0
+offset_bottom = 72.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("SB_Panel")
+
+[node name="DayVBox" type="VBoxContainer" parent="UI/HUD/DayPanel" unique_id=1618686826]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="DayLabel" type="Label" parent="UI/HUD/DayPanel/DayVBox" unique_id=366122239]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 16
+text = "Day 1: Water-Balancing"
+horizontal_alignment = 1
+
+[node name="TimerLabel" type="Label" parent="UI/HUD/DayPanel/DayVBox" unique_id=1411359252]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.32, 0.25, 1)
+theme_override_font_sizes/font_size = 22
+text = "T-MINUS 01:45"
+horizontal_alignment = 1
+
+[node name="ObjectiveBanner" type="PanelContainer" parent="UI/HUD" unique_id=1848448285]
+unique_name_in_owner = true
+layout_mode = 1
+offset_left = 10.0
+offset_top = 58.0
+offset_right = 240.0
+offset_bottom = 116.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("SB_Panel")
+
+[node name="ObjectiveLabel" type="Label" parent="UI/HUD/ObjectiveBanner" unique_id=159961206]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 14
+text = "M1: CATCH THE WATER DROPS!"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="RocketPanel" type="PanelContainer" parent="UI/HUD" unique_id=27614164]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -190.0
+offset_top = 78.0
+offset_right = 190.0
+offset_bottom = 116.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("SB_Panel")
+
+[node name="RocketClockLabel" type="Label" parent="UI/HUD/RocketPanel" unique_id=1646048925]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 20
+text = "ROCKET TO EARTH  05:00"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RocketWarning" type="PanelContainer" parent="UI/HUD" unique_id=1472279476]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -360.0
+offset_top = 170.0
+offset_right = 360.0
+offset_bottom = 260.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("SB_FailCard")
+
+[node name="RocketWarningLabel" type="Label" parent="UI/HUD/RocketWarning" unique_id=1053996037]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_colors/font_outline_color = Color(0.4, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 22
+text = "WARNING! The Earth supply rocket launches in exactly 2 MINUTES!"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="ActionButtons" type="HBoxContainer" parent="UI/HUD" unique_id=1109847976]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -50.0
+offset_right = 620.0
+offset_bottom = -8.0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="LeaveButton" type="Button" parent="UI/HUD/ActionButtons" unique_id=1251529913]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+tooltip_text = "Pause this job and walk through the outpost to the Oxygen, Power or Shield room to refill"
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("SB_OptB")
+theme_override_styles/pressed = SubResource("SB_OptB_Hover")
+theme_override_styles/hover = SubResource("SB_OptB_Hover")
+text = "LEAVE - WALK TO ROOMS"
+
+[node name="QuitSaveButton" type="Button" parent="UI/HUD/ActionButtons" unique_id=1484864149]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+tooltip_text = "Keep your points, save and go back to the outpost map"
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("SB_OptGreen")
+theme_override_styles/pressed = SubResource("SB_OptGreen_Hover")
+theme_override_styles/hover = SubResource("SB_OptGreen_Hover")
+text = "SAVE & EXIT"
+
+[node name="TradeOffPanel" type="Control" parent="UI" unique_id=365359738]
+unique_name_in_owner = true
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="UI/TradeOffPanel" unique_id=719380744]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.12, 0, 0.02, 0.72)
+
+[node name="Card" type="PanelContainer" parent="UI/TradeOffPanel" unique_id=1259385287]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -420.0
+offset_top = -255.0
+offset_right = 420.0
+offset_bottom = 255.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("SB_HazardCard")
+
+[node name="VBox" type="VBoxContainer" parent="UI/TradeOffPanel/Card" unique_id=925506510]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TradeOffTag" type="Label" parent="UI/TradeOffPanel/Card/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.5, 0.45, 1)
+theme_override_font_sizes/font_size = 18
+text = "⚠  HAZARD ALERT  ⚠"
+horizontal_alignment = 1
+
+[node name="TradeOffTitle" type="Label" parent="UI/TradeOffPanel/Card/VBox" unique_id=1095809618]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.86, 0.2, 1)
+theme_override_colors/font_outline_color = Color(0.55, 0.04, 0.04, 1)
+theme_override_constants/outline_size = 12
+theme_override_font_sizes/font_size = 58
+text = "OXYGEN LEAK!"
+horizontal_alignment = 1
+
+[node name="DropPill" type="PanelContainer" parent="UI/TradeOffPanel/Card/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/panel = SubResource("SB_DropPill")
+
+[node name="TradeOffDrop" type="Label" parent="UI/TradeOffPanel/Card/VBox/DropPill"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.3, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 30
+text = "OXYGEN  -30%"
+horizontal_alignment = 1
+
+[node name="TradeOffMessage" type="Label" parent="UI/TradeOffPanel/Card/VBox" unique_id=1640662075]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(720, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.97, 1, 1)
+theme_override_font_sizes/font_size = 21
+text = "NASA FACT: Without oxygen, muscles get weak and slow."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Ask" type="Label" parent="UI/TradeOffPanel/Card/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "What will you do?"
+horizontal_alignment = 1
+
+[node name="Buttons" type="HBoxContainer" parent="UI/TradeOffPanel/Card/VBox" unique_id=2115832042]
+layout_mode = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="OptionAButton" type="Button" parent="UI/TradeOffPanel/Card/VBox/Buttons" unique_id=2062679660]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 120)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 21
+theme_override_styles/normal = SubResource("SB_OptB")
+theme_override_styles/hover = SubResource("SB_OptB_Hover")
+theme_override_styles/pressed = SubResource("SB_OptB_Hover")
+theme_override_styles/focus = SubResource("SB_OptB_Hover")
+text = "Button A"
+autowrap_mode = 3
+
+[node name="OptionBButton" type="Button" parent="UI/TradeOffPanel/Card/VBox/Buttons" unique_id=1611584856]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 120)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 21
+theme_override_styles/normal = SubResource("SB_OptGreen")
+theme_override_styles/hover = SubResource("SB_OptGreen_Hover")
+theme_override_styles/pressed = SubResource("SB_OptGreen_Hover")
+theme_override_styles/focus = SubResource("SB_OptGreen_Hover")
+text = "Button B"
+autowrap_mode = 3
+
+[node name="InfoPanel" type="Control" parent="UI" unique_id=1388510826]
+unique_name_in_owner = true
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="UI/InfoPanel" unique_id=8876289]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0.01, 0.04, 0.6)
+
+[node name="Card" type="PanelContainer" parent="UI/InfoPanel" unique_id=1301744325]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -170.0
+offset_right = 320.0
+offset_bottom = 170.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("SB_AlertCard")
+
+[node name="VBox" type="VBoxContainer" parent="UI/InfoPanel/Card" unique_id=2060055795]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="InfoTag" type="Label" parent="UI/InfoPanel/Card/VBox" unique_id=437221371]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "NASA DATASET: OSDR"
+horizontal_alignment = 1
+
+[node name="InfoTitle" type="Label" parent="UI/InfoPanel/Card/VBox" unique_id=183567465]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_colors/font_outline_color = Color(0.35, 0.2, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 30
+text = "DID YOU KNOW?"
+horizontal_alignment = 1
+
+[node name="InfoBody" type="Label" parent="UI/InfoPanel/Card/VBox" unique_id=546144907]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(560, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.97, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "Did you know astronauts grow real food on the ISS?"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="InfoButton" type="Button" parent="UI/InfoPanel/Card/VBox" unique_id=1429324573]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 56)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("SB_OptB")
+theme_override_styles/pressed = SubResource("SB_OptB_Hover")
+theme_override_styles/hover = SubResource("SB_OptB_Hover")
+theme_override_styles/focus = SubResource("SB_OptB_Hover")
+text = "LET'S GO!"
+
+[node name="MissionFailedScreen" type="Control" parent="UI" unique_id=1611582177]
+unique_name_in_owner = true
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="UI/MissionFailedScreen" unique_id=1794436984]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.95)
+
+[node name="Card" type="PanelContainer" parent="UI/MissionFailedScreen" unique_id=1614972230]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -130.0
+offset_right = 280.0
+offset_bottom = 130.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("SB_FailCard")
+
+[node name="VBox" type="VBoxContainer" parent="UI/MissionFailedScreen/Card" unique_id=179247796]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Title" type="Label" parent="UI/MissionFailedScreen/Card/VBox" unique_id=1345841655]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.3, 0.25, 1)
+theme_override_colors/font_outline_color = Color(0.3, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 42
+text = "MISSION FAILED"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="UI/MissionFailedScreen/Card/VBox" unique_id=1772388899]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.6, 0.55, 1)
+theme_override_font_sizes/font_size = 20
+text = "CREW EMERGENCY EVACUATION"
+horizontal_alignment = 1
+
+[node name="FailReasonLabel" type="Label" parent="UI/MissionFailedScreen/Card/VBox" unique_id=1003699851]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.85, 1)
+theme_override_font_sizes/font_size = 17
+text = "OXYGEN reached 0%!"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Buttons" type="HBoxContainer" parent="UI/MissionFailedScreen/Card/VBox" unique_id=1251239879]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="RetryButton" type="Button" parent="UI/MissionFailedScreen/Card/VBox/Buttons" unique_id=1016176305]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(210, 56)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 19
+theme_override_styles/normal = SubResource("SB_OptB")
+theme_override_styles/pressed = SubResource("SB_OptB_Hover")
+theme_override_styles/hover = SubResource("SB_OptB_Hover")
+theme_override_styles/focus = SubResource("SB_OptB_Hover")
+text = "RETRY MISSION"
+
+[node name="FailMapButton" type="Button" parent="UI/MissionFailedScreen/Card/VBox/Buttons" unique_id=265514881]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 56)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.95, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 17
+theme_override_styles/normal = SubResource("SB_Mission")
+theme_override_styles/pressed = SubResource("SB_Mission_Hover")
+theme_override_styles/hover = SubResource("SB_Mission_Hover")
+theme_override_styles/focus = SubResource("SB_Mission_Hover")
+text = "BACK TO MAP"
+
+[node name="LevelCompleteScreen" type="Control" parent="UI" unique_id=1601076812]
+unique_name_in_owner = true
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="UI/LevelCompleteScreen" unique_id=740842737]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0.04, 0.02, 0.65)
+
+[node name="Card" type="PanelContainer" parent="UI/LevelCompleteScreen" unique_id=345055654]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -140.0
+offset_right = 280.0
+offset_bottom = 140.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("SB_WinCard")
+
+[node name="VBox" type="VBoxContainer" parent="UI/LevelCompleteScreen/Card" unique_id=330017411]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Title" type="Label" parent="UI/LevelCompleteScreen/Card/VBox" unique_id=642048073]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 1, 0.55, 1)
+theme_override_colors/font_outline_color = Color(0, 0.25, 0.1, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 40
+text = "MISSION COMPLETE!"
+horizontal_alignment = 1
+
+[node name="CompleteSummaryLabel" type="Label" parent="UI/LevelCompleteScreen/Card/VBox" unique_id=55288814]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 1, 0.92, 1)
+theme_override_font_sizes/font_size = 17
+text = "Mission 1 complete!"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Buttons" type="HBoxContainer" parent="UI/LevelCompleteScreen/Card/VBox" unique_id=1410591671]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="NextMissionButton" type="Button" parent="UI/LevelCompleteScreen/Card/VBox/Buttons" unique_id=1290060622]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(210, 56)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.05, 0, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.05, 0, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.05, 0, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.05, 0, 1)
+theme_override_font_sizes/font_size = 19
+theme_override_styles/normal = SubResource("SB_OptA")
+theme_override_styles/pressed = SubResource("SB_OptA_Hover")
+theme_override_styles/hover = SubResource("SB_OptA_Hover")
+theme_override_styles/focus = SubResource("SB_OptA_Hover")
+text = "NEXT MISSION"
+
+[node name="CompleteMapButton" type="Button" parent="UI/LevelCompleteScreen/Card/VBox/Buttons" unique_id=684536443]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 56)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.95, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 17
+theme_override_styles/normal = SubResource("SB_Mission")
+theme_override_styles/pressed = SubResource("SB_Mission_Hover")
+theme_override_styles/hover = SubResource("SB_Mission_Hover")
+theme_override_styles/focus = SubResource("SB_Mission_Hover")
+text = "BACK TO MAP"
+
+[node name="GameBeatenScreen" type="Control" parent="UI" unique_id=1863175475]
+unique_name_in_owner = true
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="UI/GameBeatenScreen" unique_id=1743994728]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.03, 0.02, 0, 0.7)
+
+[node name="Card" type="PanelContainer" parent="UI/GameBeatenScreen" unique_id=838793286]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -140.0
+offset_right = 300.0
+offset_bottom = 140.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("SB_GoldCard")
+
+[node name="VBox" type="VBoxContainer" parent="UI/GameBeatenScreen/Card" unique_id=1500257241]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Title" type="Label" parent="UI/GameBeatenScreen/Card/VBox" unique_id=1285536316]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_colors/font_outline_color = Color(0.35, 0.2, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 42
+text = "MISSION ACCOMPLISHED"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="UI/GameBeatenScreen/Card/VBox" unique_id=2007730579]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 1, 0.55, 1)
+theme_override_font_sizes/font_size = 20
+text = "OUTPOST ALPHA SECURED"
+horizontal_alignment = 1
+
+[node name="FinalScoreLabel" type="Label" parent="UI/GameBeatenScreen/Card/VBox" unique_id=1062969799]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.96, 0.85, 1)
+theme_override_font_sizes/font_size = 18
+text = "FINAL SCIENCE SCORE: 0"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="PlayAgainButton" type="Button" parent="UI/GameBeatenScreen/Card/VBox" unique_id=1971627287]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 56)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.2, 0.05, 0, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.05, 0, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.05, 0, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.05, 0, 1)
+theme_override_font_sizes/font_size = 19
+theme_override_styles/normal = SubResource("SB_OptA")
+theme_override_styles/pressed = SubResource("SB_OptA_Hover")
+theme_override_styles/hover = SubResource("SB_OptA_Hover")
+theme_override_styles/focus = SubResource("SB_OptA_Hover")
+text = "PLAY AGAIN"
+
+[node name="Nova" type="Control" parent="UI" unique_id=1858947905]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("4_nova")
