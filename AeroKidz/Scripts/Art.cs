@@ -23,7 +23,7 @@ public static class Art
     public static readonly Color White = new(0.95f, 0.97f, 1f);
     public static readonly Color Steel = new(0.6f, 0.65f, 0.72f);
 
-    public static Font Font => ThemeDB.FallbackFont;
+    public static Font Font => KidFont;
 
     // ------------------------------------------------------------------
     // PICTURES (PNG files in res://Assets - craftpix.net free packs, see the LICENSE files there)
@@ -72,17 +72,33 @@ public static class Art
 
     /// <summary>
     /// A chunky, rounded, kid-friendly font from the computer (no font file needed).
-    /// Tries each name in order; Windows always has Segoe UI. Called once at start-up by GameManager.
-    /// To use your own font: put a .ttf in the project and set ThemeDB.FallbackFont = GD.Load&lt;Font&gt;("res://...ttf").
+    /// Tries each name in order; Windows always has Segoe UI.
+    /// To use your own font: put a .ttf in the project and return GD.Load&lt;Font&gt;("res://...ttf") here.
     /// </summary>
-    public static void UseKidFont()
+    public static Font KidFont => _kidFont ??= new SystemFont
     {
-        ThemeDB.FallbackFont = new SystemFont
-        {
-            FontNames = new[] { "Fredoka", "Baloo 2", "Nunito", "Arial Rounded MT Bold", "Segoe UI Black", "Segoe UI", "Arial" },
-            FontWeight = 800,
-            Antialiasing = TextServer.FontAntialiasing.Gray,
-        };
+        FontNames = new[] { "Fredoka", "Baloo 2", "Nunito", "Arial Rounded MT Bold", "Segoe UI Black", "Segoe UI", "Arial" },
+        FontWeight = 800,
+        Antialiasing = TextServer.FontAntialiasing.Gray,
+    };
+    private static Font _kidFont;
+
+    /// <summary>A theme whose default font is the kid font.</summary>
+    public static Theme KidTheme => _kidTheme ??= new Theme { DefaultFont = KidFont };
+    private static Theme _kidTheme;
+
+    /// <summary>
+    /// Give the AeroKidz screens the kid font. Only OUR controls get it (through a Theme), NOT the whole
+    /// project: the 3D team's boards and labels keep their own font, so their text still fits their screens.
+    /// Every Control under 'root' that has no Control parent (e.g. the children of a CanvasLayer) gets the
+    /// theme; everything below it inherits it, including minigames added later.
+    /// </summary>
+    public static void UseKidFont(Node root)
+    {
+        if (root is Control c && c.GetParent() is not Control)
+            c.Theme = KidTheme;
+        foreach (Node child in root.GetChildren())
+            UseKidFont(child);
     }
 
     // ------------------------------------------------------------------

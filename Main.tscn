@@ -108,7 +108,6 @@
 [ext_resource type="PackedScene" uid="uid://ddlvsav378s7a" path="res://Art/models/shield_generator.glb" id="106_h0r08"]
 [ext_resource type="PackedScene" uid="uid://bygssc8wscbqa" path="res://Art/models/solar_panel_5x10.glb" id="107_uecmj"]
 [ext_resource type="PackedScene" uid="uid://d08sph6gwkadc" path="res://Art/models/Solar station .glb" id="108_rkgid"]
-[ext_resource type="PackedScene" uid="uid://dgwkus5koep8g" path="res://Art/models/hallway.glb" id="109_y5qkn"]
 [ext_resource type="PackedScene" uid="uid://432us3ck77fw" path="res://Art/models/corridor.glb" id="110_08030"]
 
 [sub_resource type="Resource" id="Resource_vybqf"]
@@ -1259,9 +1258,6 @@ size = Vector3(11.969028, 1.1283389, 11.208301)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_mo1g6"]
 size = Vector3(9.45224, 12.524808, 9.517866)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_b3qm2"]
-size = Vector3(393.7162, 196.9205, 787.40155)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_g1bks"]
 size = Vector3(4.682213, 0.4, 21.402702)
@@ -13161,23 +13157,6 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.2434726, 4.7683716e-07)
 shape = SubResource("BoxShape3D_mo1g6")
 
-[node name="Model_12_Hallway_Kit__Rover_Bay_annex_" type="Node3D" parent="." unique_id=2013317872 groups=["model_builder_instance"]]
-transform = Transform3D(-6.556708e-08, 0, 1.5, 0, 1.5, 0, -1.5, 0, -6.556708e-08, 26, 0, 21)
-metadata/mb_index = 12
-
-[node name="Fit" type="Node3D" parent="Model_12_Hallway_Kit__Rover_Bay_annex_" unique_id=1654719370]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, -0.9843286, 0.0007008951, -0.984252)
-
-[node name="Model" parent="Model_12_Hallway_Kit__Rover_Bay_annex_/Fit" unique_id=1766871793 instance=ExtResource("109_y5qkn")]
-
-[node name="Collision" type="StaticBody3D" parent="Model_12_Hallway_Kit__Rover_Bay_annex_/Fit" unique_id=704784997]
-collision_layer = 9
-collision_mask = 0
-
-[node name="Box" type="CollisionShape3D" parent="Model_12_Hallway_Kit__Rover_Bay_annex_/Fit/Collision" unique_id=542138632]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 98.43287, 98.39016, 98.4252)
-shape = SubResource("BoxShape3D_b3qm2")
-
 [node name="Model_13_Corridor__WestCorridor" type="Node3D" parent="." unique_id=434715592 groups=["model_builder_instance"]]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -20.864027, 0.27, 0)
 metadata/mb_index = 13
@@ -14430,7 +14409,6 @@ shape = SubResource("BoxShape3D_vs3tq")
 [editable path="Model_09_Shield_Generator__Shield_room_/Fit/Model"]
 [editable path="Model_10_Solar_Panel_Field_5x10/Fit/Model"]
 [editable path="Model_11_Solar_Station/Fit/Model"]
-[editable path="Model_12_Hallway_Kit__Rover_Bay_annex_/Fit/Model"]
 [editable path="Model_13_Corridor__WestCorridor/Fit0/Model"]
 [editable path="Model_13_Corridor__WestCorridor/Fit1/Model"]
 [editable path="Model_14_Corridor__OxygenTube/Fit/Model"]

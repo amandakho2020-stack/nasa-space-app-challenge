@@ -53,11 +53,11 @@ Starting Mission 1 → Nova pops up and says *"Welcome to the Moon! … space fa
 2. After 6 drops the game freezes: **ALERT! Oxygen leak** → Oxygen −30%.
    - 🔵 **Run to the Oxygen Room** (safe, +100): the water game stops (the water you caught is kept) → you WALK through the corridors to the Oxygen Room → pipe puzzle → Oxygen 100% → walk back to the Plant Room.
    - 🟢 **Keep Collecting Water** (science, +500): the same water game continues, but you are SLOW and oxygen leaks faster.
-3. **Harvest**: the plants grew from your water. Lots of water = big healthy radishes; little water = small, withered and unripe ones (less science).
+3. **Harvest**: the plants grew from your water. Lots of water = big healthy carrots; little water = small, withered and unripe ones (less science).
 
 | Mission | Day 1 | Hazard (bar drops 30%) | 🔵 A | 🟢 B | Final day |
 |---|---|---|---|---|---|
-| **2 Core Drill** | **Drill (~20 s): hold to drill, keep the dial in the GREEN, red = jam** | Earth germs → **Power −30%** | HMR heater: **+500**, Power 10%, darkout | Save power (+100): walk to the **Power Room** → puzzle → Power 100% | Walk back → *found a broken circuit!* → circuit game |
+| **2 Core Drill** | **Drill (~20 s): hold to drill, keep the dial in the GREEN, red = jam** | Earth germs → **Power −30%** | HMR heater: **+500**, Power 10% → heat-probe germ game → back to the outpost → circuit in the DARK | Ignore the germs: **−300** (dirty water, no germ game) → back to the outpost → circuit with the lights ON | (both: walk/drive back, then the circuit) |
 | **3 Telescope** | Sun watcher | Solar flare (live NASA class) → **Shield −30%** | Keep studying: **+1000**, Shield 0% at the storm | Walk to the **Shield Room** → meteors → Shield 100%, +50 | 3-minute storm (NASA data) |
 
 The **safe** option always means WALKING to that bar's room to earn it back (Oxygen Room / Power Room / Shield Room).
@@ -65,7 +65,7 @@ After all 3 missions: **TIME TO GO HOME!** → walk to the rocket → 3, 2, 1, L
 
 ## Buttons during any mission (bottom-left)
 - **LEAVE - WALK TO ROOMS**: pause the game and go back to the outpost. Walk to the Oxygen / Power / Shield room to refill that bar (+45), then walk back INTO the mission room to carry on exactly where you stopped. (Hidden on Day 9, where the storm map has its own rooms.)
-- **SAVE & EXIT**: keep this attempt's science points, save to disk and go back to the map. The mission is not marked complete; start it again to finish it.
+- **SAVE & EXIT** (button hidden for now, see `_quitSaveButton` in UIManager.cs): keep this attempt's science points, save to disk and go back to the map. The mission is not marked complete; start it again to finish it.
 - Progress (best score per mission, completed missions, choices) is saved to `user://aero_kidz_save.cfg`. "Play Again" wipes it.
 
 ## Controls
@@ -134,7 +134,11 @@ Press **F5** on the project: the 3D base opens and the AeroKidz games run on top
 - Every room has a glowing **screen** (`RoomScreen3D.cs`). Walk up to it and press **E** to play that room's game:
   Plant = Mission 1, **Core Drill** = Mission 2 (outside: take the rover from the Rover Bay and drive south), Telescope = Mission 3,
   Oxygen / Power / Shield = the repair games that refill the bars.
-- The room you should go to glows yellow and shows a **▼ GO HERE ▼** marker. You can see it through walls.
+- The room you should go to glows yellow and shows a **▼ GO HERE ▼** marker (you can see it through walls),
+  and glowing **arrows on the floor** lead you there along the corridors, even down the rover road (`FloorArrows3D.cs`,
+  corridor network in its Points / Links tables). Each screen also has a big room name above it.
+- `BoardTextFitter.cs` shrinks the words on the 3D wall boards so they always fit inside their screen.
+- The kid font is only used on the AeroKidz screens (`Art.UseKidFont`), not on the 3D team's boards.
 - Mission 2: after the germ game you **drive back** and walk in through the airlock (in 3D this replaces the 2D moon walk).
 - While a game, pop-up or Nova message is open, the astronaut stops and the mouse is free to click.
   When you walk again, the mouse turns the camera (WASD to move, E to use, Esc frees the mouse).
