@@ -134,6 +134,19 @@ public partial class GameManager : Node
         LoadProgress();
     }
 
+    public override void _Ready()
+    {
+        // In the team's 3D outpost (res://Main.tscn) the games run on top of the 3D world.
+        // Wait one frame so the main scene is loaded, then let World3DBridge join them.
+        GetTree().ProcessFrame += AttachTo3DWorldOnce;
+    }
+
+    private void AttachTo3DWorldOnce()
+    {
+        GetTree().ProcessFrame -= AttachTo3DWorldOnce;
+        World3DBridge.AttachIfNeeded(GetTree());
+    }
+
     // ==================================================================
     // SAVE / LOAD (best science per mission, completed missions, choices)
     // Stored in Godot's user folder, so closing the game keeps your performance.

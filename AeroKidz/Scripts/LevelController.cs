@@ -156,7 +156,7 @@ public partial class LevelController : Node
             "Keep them above zero. Get a high score!",
             "LET'S GO!"),
         Step.NovaSay("Hi, I'm Nova! I'm your robot helper."),
-        Step.NovaSay("Click a room to walk there. Let's start with the Plant Room!"),
+        Step.NovaSay("Walk to a room. Let's start with the Plant Room!"),
     };
 
     private static readonly MissionDef[] Missions =
@@ -198,7 +198,7 @@ public partial class LevelController : Node
                 }
                 : new[]
                 {
-                    Step.Walk(OutpostRoom.Oxygen, "GO TO THE OXYGEN ROOM", "Click the Oxygen Room to walk there!"),
+                    Step.Walk(OutpostRoom.Oxygen, "GO TO THE OXYGEN ROOM", "Go to the Oxygen Room!"),
                     Step.Walk(OutpostRoom.Plant, "GO BACK TO THE PLANT ROOM", "Oxygen is full! Back to the plants!"),
                     Step.Show("DAY 3", "HARVEST DAY!",
                         "You are fast!\nBut the plants got little water. Some are small or dry.\n\n" +
@@ -243,12 +243,16 @@ public partial class LevelController : Node
                     "• Move the mouse to steer the heat probe.\n• Heat up ALL the germs before time runs out!\n• The heater uses POWER when it moves.",
                     "START CLEANING!"),
                 Step.Play(() => new HeatProbeGame(), "M2: CLEAN ALL THE GERMS!", null),
-                Step.Play(() => new MoonWalkGame(MoonWalkGame.Route.BackToBase), "WALK BACK TO BASE",
-                    "Let's walk back to base."),
+                BaseMap.WorldMode
+                    // 3D: really drive the rover back and walk in through the airlock
+                    ? Step.Walk(OutpostRoom.Airlock, "DRIVE BACK TO BASE",
+                        "Take the rover back to base. Then walk inside!")
+                    : Step.Play(() => new MoonWalkGame(MoonWalkGame.Route.BackToBase), "WALK BACK TO BASE",
+                        "Let's walk back to base."),
                 science
                     ? null
                     : Step.Walk(OutpostRoom.Power, "GO TO THE POWER ROOM",
-                        "Click the Power Room to refill power!", startAt: OutpostRoom.Airlock),
+                        "Go to the Power Room to refill power!", startAt: OutpostRoom.Airlock),
                 science
                     ? Step.Show("DAY 6", "LIGHTS OUT!",
                         "A circuit broke!\nIt's too dark to see the wire colors.\n\n" +
@@ -410,6 +414,16 @@ public partial class LevelController : Node
     public void NextMission()
     {
         int next = Gm.CurrentLevelIndex + 1;
+        if (BaseMap.WorldMode)
+        {
+            // 3D: the next mission starts at its own screen, so walk (or drive) there first
+            ReturnToMap();
+            if (next < GameManager.TotalLevels && !Gm.IsLevelCompleted(next))
+                Tip(next == 1
+                    ? "Next: the CORE DRILL! Take the rover from the Rover Bay. Drive to the drill."
+                    : $"Next: the {BaseMap.RoomName(BaseMap.MissionRoom(next))}! Go to its screen and press E.");
+            return;
+        }
         if (next < GameManager.TotalLevels && Gm.IsLevelUnlocked(next) && !Gm.IsLevelCompleted(next))
         {
             Gm.StartLevel(next);
@@ -429,12 +443,20 @@ public partial class LevelController : Node
         EnterFreeMap();
     }
 
+    /// <summary>The first unfinished mission's room (null = all done).</summary>
+    private static OutpostRoom? NextMissionRoom()
+    {
+        for (int i = 0; i < GameManager.TotalLevels; i++)
+            if (!Gm.IsLevelCompleted(i)) return BaseMap.MissionRoom(i);
+        return null;
+    }
+
     /// <summary>Back to free walking around the outpost (no mission running).</summary>
     private void EnterFreeMap()
     {
         _walkGoal = null;
-        _map.SetGoal(null);
-        _map.HelpText = "CLICK A ROOM TO WALK THERE";
+        _map.SetGoal(BaseMap.WorldMode ? NextMissionRoom() : null); // 3D: the next mission's screen glows
+        _map.HelpText = BaseMap.FreeWalkText;
         CurrentPhase = Phase.Map;
         EmitSignal(SignalName.ReturnedToMap);
     }
@@ -506,7 +528,7 @@ public partial class LevelController : Node
             _map.PlaceAt(start);
         _walkGoal = s.GoTo;
         _map.SetGoal(s.GoTo);
-        _map.HelpText = $"CLICK THE {BaseMap.RoomName(s.GoTo.Value)}";
+        _map.HelpText = BaseMap.GoText(s.GoTo.Value);
         CurrentPhase = Phase.Walking;
         EmitSignal(SignalName.WalkStarted, s.Objective ?? "");
     }

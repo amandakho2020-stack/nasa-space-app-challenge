@@ -89,7 +89,16 @@ public partial class GameManager : Node
 	public bool IsMinigameOpen => ActiveMission != null;
 
 	/// <summary>True when the player should not move or interact (minigame, popup, end screen).</summary>
-	public bool InputLocked => !IsRunning || IsMinigameOpen || GetTree().Paused;
+	public bool InputLocked => !IsRunning || IsMinigameOpen || GetTree().Paused || ExternalInputLock;
+
+	/// <summary>Set by the AeroKidz 2D games (World3DBridge): true while a minigame, pop-up or Nova message is on screen.</summary>
+	public bool ExternalInputLock { get; set; }
+
+	/// <summary>
+	/// Set by the AeroKidz games (World3DBridge): they run the missions and the Oxygen/Power/Shield bars,
+	/// so this survival loop (suit O2 drain, Sols, mission consoles) is switched off.
+	/// </summary>
+	public bool ExternalControl { get; set; }
 
 	private float _hp = MaxHp;
 	public float Hp
@@ -169,7 +178,7 @@ public partial class GameManager : Node
 	{
 		// Default "Inherit" process mode: this freezes while the tree is paused (Trade-Off popup).
 		// The module minigame does NOT pause, so O2 keeps draining while you work outside.
-		if (!IsRunning)
+		if (!IsRunning || ExternalControl)
 			return;
 
 		float dt = (float)delta;

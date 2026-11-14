@@ -128,12 +128,20 @@ Main (Control)
     └── %Nova                 NovaPopup.cs (any script: Say("..."))
 ```
 
-## Getting ready for the 3D base
-Only `BaseMap.cs` needs replacing - the 2D map is already a walkable version of the same idea. The 3D base must:
-- emit `RoomEntered(int room)` when the player walks into a room (`OutpostRoom` enum: Hub, Oxygen, Power, Shield, Plant, Drill, Telescope),
-- emit `BuildingInfo(string)` for Nova's comments,
-- offer `PlaceAt(OutpostRoom)`, `SetGoal(OutpostRoom?)` (highlight where to walk), `InputLocked`, `HelpText`, and `Show()` / `Hide()`.
-LevelController decides everything else (start a mission, open a repair, resume a paused mission).
+## Playing in the team's 3D outpost (res://Main.tscn)
+Press **F5** on the project: the 3D base opens and the AeroKidz games run on top of it.
+`World3DBridge.cs` joins them (it starts by itself when the 3D scene runs):
+- Every room has a glowing **screen** (`RoomScreen3D.cs`). Walk up to it and press **E** to play that room's game:
+  Plant = Mission 1, **Core Drill** = Mission 2 (outside: take the rover from the Rover Bay and drive south), Telescope = Mission 3,
+  Oxygen / Power / Shield = the repair games that refill the bars.
+- The room you should go to glows yellow and shows a **▼ GO HERE ▼** marker. You can see it through walls.
+- Mission 2: after the germ game you **drive back** and walk in through the airlock (in 3D this replaces the 2D moon walk).
+- While a game, pop-up or Nova message is open, the astronaut stops and the mouse is free to click.
+  When you walk again, the mouse turns the camera (WASD to move, E to use, Esc frees the mouse).
+- The 3D team's own test loop (suit O2 drain, Sols, the old pipe consoles, their stats panel) is switched off,
+  so there is ONE set of bars. This uses the `ExternalControl` / `ExternalInputLock` switches in `Scripts/GameManager.cs`.
+- Screen positions: the `Screens` table at the top of `World3DBridge.cs`.
+- `AeroKidz/Scenes/Main.tscn` still runs the 2D version on its own (for testing minigames quickly).
 
 ## Art files (Assets/)
 - `Assets/space/` - craftpix.net *Free Space Shooter Game Objects*: meteors, the blue shield arc, explosion frames and the heart, all used in the Shield Room.

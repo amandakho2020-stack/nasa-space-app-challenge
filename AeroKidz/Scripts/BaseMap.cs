@@ -95,6 +95,33 @@ public partial class BaseMap : Control
     /// <summary>The yellow help line at the bottom (LevelController changes it per situation).</summary>
     public string HelpText { get; set; } = "CLICK A ROOM TO WALK THERE";
 
+    // ==================================================================
+    // 3D WORLD MODE (the team's real 3D outpost - see World3DBridge.cs)
+    // ==================================================================
+
+    /// <summary>
+    /// true = the real 3D outpost is used. This 2D map then draws nothing and takes no clicks;
+    /// the 3D room screens call EnterRoom() instead, and World3DBridge listens to GoalChanged.
+    /// </summary>
+    public static bool WorldMode { get; set; }
+
+    /// <summary>The room LevelController wants the player to go to changed (null = none).</summary>
+    public event System.Action<OutpostRoom?> GoalChanged;
+
+    /// <summary>The current goal room (null = none).</summary>
+    public OutpostRoom? Goal => _goal;
+
+    /// <summary>3D mode: the player used a room's screen (same as walking into that room on the 2D map).</summary>
+    public void EnterRoom(OutpostRoom room) => EmitSignal(SignalName.RoomEntered, (int)room);
+
+    /// <summary>"CLICK THE X" on the 2D map, "GO TO THE X SCREEN" in 3D.</summary>
+    public static string GoText(OutpostRoom room) => WorldMode
+        ? (room == OutpostRoom.Airlock ? "GO BACK INSIDE THE BASE" : $"GO TO THE {RoomName(room)} SCREEN - PRESS E")
+        : $"CLICK THE {RoomName(room)}";
+
+    /// <summary>The free-walk help line.</summary>
+    public static string FreeWalkText => WorldMode ? "WALK TO A GLOWING SCREEN - PRESS E" : "CLICK A ROOM TO WALK THERE";
+
     private static GameManager Gm => GameManager.Instance;
 
     public static OutpostRoom MissionRoom(int level) => level switch
@@ -119,7 +146,8 @@ public partial class BaseMap : Control
 
     public override void _Ready()
     {
-        MouseFilter = MouseFilterEnum.Stop;
+        MouseFilter = WorldMode ? MouseFilterEnum.Ignore : MouseFilterEnum.Stop;
+        HelpText = FreeWalkText;
         PlaceAt(OutpostRoom.Hub);
     }
 
@@ -130,6 +158,7 @@ public partial class BaseMap : Control
     /// <summary>Put the astronaut in a room (no RoomEntered event for it).</summary>
     public void PlaceAt(OutpostRoom room)
     {
+        if (WorldMode) return; // in 3D the player is already standing at the room's screen
         var n = Get(room);
         _pos = n.Pos + new Vector2(0, 14);
         _path.Clear();
@@ -139,14 +168,18 @@ public partial class BaseMap : Control
     }
 
     /// <summary>Highlight where the player should walk (or null for none).</summary>
-    public void SetGoal(OutpostRoom? room) => _goal = room;
+    public void SetGoal(OutpostRoom? room)
+    {
+        _goal = room;
+        GoalChanged?.Invoke(room);
+    }
 
     // ==================================================================
     // INPUT + WALKING
     // ==================================================================
     public override void _GuiInput(InputEvent e)
     {
-        if (e is not InputEventMouseButton mb || mb.ButtonIndex != MouseButton.Left || !mb.Pressed)
+        if (WorldMode || e is not InputEventMouseButton mb || mb.ButtonIndex != MouseButton.Left || !mb.Pressed)
             return;
 
         if (mb.Position.DistanceTo(NovaPos) < 50f)
@@ -243,7 +276,7 @@ public partial class BaseMap : Control
 
     public override void _Process(double delta)
     {
-        if (!IsVisibleInTree()) return;
+        if (WorldMode || !IsVisibleInTree()) return;
         float dt = (float)delta;
         _time += dt;
 
@@ -329,6 +362,7 @@ public partial class BaseMap : Control
     // ==================================================================
     public override void _Draw()
     {
+        if (WorldMode) return;
         int litCount = 0, rooms = 0;
         foreach (var n in _nodes) if (n.IsRoom) { rooms++; if (n.Lit) litCount++; }
         float light = 0.5f + 0.5f * litCount / rooms;
