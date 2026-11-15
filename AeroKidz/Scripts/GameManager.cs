@@ -112,6 +112,27 @@ public partial class GameManager : Node
     private readonly bool[] _levelCompleted = new bool[TotalLevels];
     private int _pendingScience; // points earned in the CURRENT attempt (lost on retry)
 
+    /// <summary>The best final score of any finished game (all 3 missions + the rocket). Kept after "Play Again".</summary>
+    public int HighScore { get; private set; }
+
+    /// <summary>true when the last finished game beat the old high score.</summary>
+    public bool LastScoreWasRecord { get; private set; }
+
+    /// <summary>Called when the rocket has flown home: remember the high score.</summary>
+    public void RecordFinalScore(int score)
+    {
+        LastScoreWasRecord = score > HighScore;
+        if (LastScoreWasRecord) HighScore = score;
+        SaveProgress();
+    }
+
+    /// <summary>
+    /// This mission's score right now: the best of an earlier attempt and this attempt. On the FIRST attempt
+    /// it is just this attempt, so a penalty (Mission 2 dirty water, -300) can really take points away.
+    /// </summary>
+    private int MergedScience(int i) =>
+        _levelCompleted[i] || _bestLevelScience[i] != 0 ? Mathf.Max(_bestLevelScience[i], _pendingScience) : _pendingScience;
+
     /// <summary>Total score = best score of every other mission + this attempt.</summary>
     public int TotalScience
     {
@@ -119,8 +140,8 @@ public partial class GameManager : Node
         {
             int total = 0;
             for (int i = 0; i < TotalLevels; i++)
-                total += i == CurrentLevelIndex ? Mathf.Max(_bestLevelScience[i], _pendingScience) : _bestLevelScience[i];
-            return total;
+                total += i == CurrentLevelIndex ? MergedScience(i) : _bestLevelScience[i];
+            return Mathf.Max(0, total); // the total score never goes below 0
         }
     }
 
@@ -155,6 +176,7 @@ public partial class GameManager : Node
     {
         var cfg = new ConfigFile();
         cfg.SetValue("progress", "highest_unlocked", HighestUnlockedLevel);
+        cfg.SetValue("progress", "high_score", HighScore);
         cfg.SetValue("bars", "oxygen", _startOxygen);   // bars carry over between missions, so save them too
         cfg.SetValue("bars", "power", _startPower);
         cfg.SetValue("bars", "shield", _startShield);
@@ -167,11 +189,21 @@ public partial class GameManager : Node
         cfg.Save(SavePath);
     }
 
+    /// <summary>
+    /// false = every time the game opens it is a NEW game (missions, score and bars start fresh);
+    /// only the HIGHEST SCORE is kept. Set true to continue the saved game instead
+    /// (e.g. for a "CONTINUE" button on the future home page).
+    /// </summary>
+    public static bool ResumeSavedGame = false;
+
     private void LoadProgress()
     {
         var cfg = new ConfigFile();
         if (cfg.Load(SavePath) != Error.Ok)
             return;
+        HighScore = (int)cfg.GetValue("progress", "high_score", 0); // always kept
+        if (!ResumeSavedGame)
+            return; // a fresh game: everything else stays at its start value
         HighestUnlockedLevel = Mathf.Clamp((int)cfg.GetValue("progress", "highest_unlocked", 0), 0, TotalLevels - 1);
         Oxygen = _startOxygen = Mathf.Clamp((float)cfg.GetValue("bars", "oxygen", MaxResource), 1f, MaxResource);
         Power = _startPower = Mathf.Clamp((float)cfg.GetValue("bars", "power", MaxResource), 1f, MaxResource);
@@ -250,8 +282,8 @@ public partial class GameManager : Node
     public bool CompleteCurrentLevel()
     {
         RefillAll();
+        _bestLevelScience[CurrentLevelIndex] = MergedScience(CurrentLevelIndex); // (before marking it complete)
         _levelCompleted[CurrentLevelIndex] = true;
-        _bestLevelScience[CurrentLevelIndex] = Mathf.Max(_bestLevelScience[CurrentLevelIndex], _pendingScience);
         HighestUnlockedLevel = Mathf.Max(HighestUnlockedLevel, Mathf.Min(CurrentLevelIndex + 1, TotalLevels - 1));
         EmitSignal(SignalName.ScienceChanged, TotalScience);
         SaveProgress();
@@ -299,7 +331,7 @@ public partial class GameManager : Node
     /// <summary>SAVE & EXIT: keep the points of this attempt as this mission's score (the mission is not marked complete).</summary>
     public void BankScience()
     {
-        _bestLevelScience[CurrentLevelIndex] = Mathf.Max(_bestLevelScience[CurrentLevelIndex], _pendingScience);
+        _bestLevelScience[CurrentLevelIndex] = MergedScience(CurrentLevelIndex);
         SaveProgress();
         EmitSignal(SignalName.ScienceChanged, TotalScience);
     }
@@ -316,7 +348,9 @@ public partial class GameManager : Node
 
     // ---- Science rewards for the choice ----
     public const int M1ScienceMax = 500, M1ScienceLow = 100;
-    public const int M2ScienceMax = 500, M2ScienceLow = 100;
+    public const int M2ScienceMax = 500;
+    /// <summary>Mission 2 option B (ignore the germs): the dirty water costs this many points.</summary>
+    public const int M2DirtyWaterPenalty = 300;
     public const int M3ScienceMax = 1000, M3ScienceLow = 50;
 
     /// <summary>
@@ -356,10 +390,10 @@ public partial class GameManager : Node
                     AddScience(M2ScienceMax);
                     summary = $"+{M2ScienceMax} points! The HMR heater killed the germs. But power is down to 10%. Lights out!";
                 }
-                else // B: Save Power! (you get the power back in the Power Room)
+                else // B: Ignore the germs: no heater, power stays safe - but the dirty water costs points
                 {
-                    AddScience(M2ScienceLow);
-                    summary = $"+{M2ScienceLow} points. No HMR heater, so germs are still in the water.";
+                    AddScience(-M2DirtyWaterPenalty);
+                    summary = "No HMR heater. The germs stay in the water...";
                 }
                 break;
 
@@ -449,7 +483,7 @@ public partial class GameManager : Node
 
     public void AddScience(int amount)
     {
-        _pendingScience = Mathf.Max(0, _pendingScience + amount);
+        _pendingScience += amount; // can go below 0 (Mission 2 dirty-water penalty); the total never does
         EmitSignal(SignalName.ScienceChanged, TotalScience);
     }
 

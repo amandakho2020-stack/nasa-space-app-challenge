@@ -25,6 +25,7 @@ public partial class UIManager : CanvasLayer
     private Label _oxygenValue, _powerValue, _shieldValue;
     private Label _scienceLabel, _dayLabel, _timerLabel, _objectiveLabel;
     private Control _dayPanel, _objectiveBanner;
+    private DayBadge _dayBadge;
 
     // ---- Rocket clock (top centre) + 2-minute warning ----
     private Control _rocketPanel, _rocketWarning;
@@ -63,7 +64,7 @@ public partial class UIManager : CanvasLayer
     // ==================================================================
     public override void _Ready()
     {
-        Art.UseKidFont(); // AeroKidz font only once the 2D game is opened
+        Art.UseKidFont(GetParent()); // the kid font for the AeroKidz screens only (not the 3D team's boards)
         _gm = GameManager.Instance;
         _lc = U<LevelController>("LevelController");
         _map = U<BaseMap>("MapLayer");
@@ -78,6 +79,11 @@ public partial class UIManager : CanvasLayer
         _dayPanel = U<Control>("DayPanel");
         _dayLabel = U<Label>("DayLabel");
         _timerLabel = U<Label>("TimerLabel");
+        // the drawn day badge replaces the plain "Day 1: ..." text box
+        _dayLabel.GetParent<Control>().Hide();
+        _dayPanel.AddThemeStyleboxOverride("panel", new StyleBoxEmpty());
+        _dayBadge = new DayBadge();
+        _dayPanel.AddChild(_dayBadge);
         _objectiveBanner = U<Control>("ObjectiveBanner");
         _objectiveLabel = U<Label>("ObjectiveLabel");
         _nova = U<NovaPopup>("Nova");
@@ -142,7 +148,11 @@ public partial class UIManager : CanvasLayer
         _lc.InfoRequested += OnInfoRequested;
         _lc.ChoiceRequested += OnChoiceRequested;
         _lc.MinigameStarted += OnMinigameStarted;
-        _lc.NovaSays += (message, speak) => _nova.Tip(message, speak);
+        _lc.NovaSays += (message, speak) =>
+        {
+            if (string.IsNullOrEmpty(message)) _nova.ClearTips(); // an empty tip = remove the old hint
+            else _nova.Tip(message, speak);
+        };
         _lc.NovaDialog += message => _nova.Dialog(message);
         _nova.DialogClosed += () => _lc.OnNovaDialogDone();
         _lc.LevelFailed += OnLevelFailed;
@@ -173,7 +183,7 @@ public partial class UIManager : CanvasLayer
 
         // Low-resource warning pulse (only while a minigame is running).
         bool playing = _lc.CurrentPhase == LevelController.Phase.Playing;
-        _quitSaveButton.Visible = _lc.CanSaveAndExit;
+        _quitSaveButton.Visible = false; // SAVE & EXIT is switched off for now (LevelController.SaveAndExit still works)
         _leaveButton.Visible = _lc.CanLeaveToOutpost;
         PulseIfLow(_oxygenBar, playing);
         PulseIfLow(_powerBar, playing);
@@ -247,8 +257,10 @@ public partial class UIManager : CanvasLayer
         _dayPanel.Show();
         _rocketPanel.Visible = LevelController.RocketClockOn;
         _dayLabel.Text = $"Day {day}: {dayTitle}";
+        _dayBadge.Set(day, dayTitle);
         OnObjectiveChanged(objective);
         _timerLabel.Text = "";
+        _dayBadge.SetTimer("");
     }
 
     private void OnObjectiveChanged(string objective)
@@ -265,6 +277,7 @@ public partial class UIManager : CanvasLayer
         _dayPanel.Show();
         OnObjectiveChanged(objective);
         _timerLabel.Text = "";
+        _dayBadge.SetTimer("");
     }
 
     private void OnMinigameStarted()
@@ -277,12 +290,14 @@ public partial class UIManager : CanvasLayer
         if (secondsLeft < 0f)
         {
             _timerLabel.Text = ""; // no time limit
+            _dayBadge.SetTimer("");
             return;
         }
         int total = Mathf.CeilToInt(secondsLeft);
         _timerLabel.Text = GameManager.TimersEnabled
             ? $"T-MINUS {total / 60:00}:{total % 60:00}"
             : $"TIME LEFT {total / 60:00}:{total % 60:00}";
+        _dayBadge.SetTimer(_timerLabel.Text);
     }
 
     private void PulseIfLow(ProgressBar bar, bool enabled)
@@ -363,12 +378,71 @@ public partial class UIManager : CanvasLayer
     private void OnGameBeaten(int totalScience)
     {
         HideAllOverlays();
+        BuildScoreRow();
+        _currentScoreValue.Text = $"{totalScience}";
+        _highScoreValue.Text = $"{_gm.HighScore}";
+        _newRecordLabel.Visible = _gm.LastScoreWasRecord;
         _finalScoreLabel.Text =
-            $"FINAL SCIENCE SCORE: {totalScience}\n\n" +
             $"Garden: {ChoiceText(0)}\n" +
             $"Drill: {ChoiceText(1)}\n" +
             $"Sun: {ChoiceText(2)}";
         _gameBeatenScreen.Show();
+    }
+
+    // ---- CURRENT SCORE / HIGHEST SCORE boxes on the final screen (made in code, once) ----
+    private Label _currentScoreValue, _highScoreValue, _newRecordLabel;
+
+    private void BuildScoreRow()
+    {
+        if (_currentScoreValue != null) return;
+        var vbox = _finalScoreLabel.GetParent<VBoxContainer>();
+
+        var row = new HBoxContainer { Alignment = BoxContainer.AlignmentMode.Center, MouseFilter = Control.MouseFilterEnum.Ignore };
+        row.AddThemeConstantOverride("separation", 24);
+        _currentScoreValue = AddScoreBox(row, "CURRENT SCORE", new Color(0.3f, 0.85f, 1f));
+        _highScoreValue = AddScoreBox(row, "HIGHEST SCORE", new Color(1f, 0.8f, 0.2f));
+        vbox.AddChild(row);
+        vbox.MoveChild(row, _finalScoreLabel.GetIndex());
+
+        _newRecordLabel = new Label { Text = "★ NEW HIGH SCORE! ★", HorizontalAlignment = HorizontalAlignment.Center };
+        _newRecordLabel.AddThemeFontSizeOverride("font_size", 24);
+        _newRecordLabel.AddThemeColorOverride("font_color", new Color(1f, 0.9f, 0.3f));
+        _newRecordLabel.AddThemeColorOverride("font_outline_color", new Color(0.4f, 0.15f, 0f));
+        _newRecordLabel.AddThemeConstantOverride("outline_size", 6);
+        vbox.AddChild(_newRecordLabel);
+        vbox.MoveChild(_newRecordLabel, row.GetIndex() + 1);
+    }
+
+    private static Label AddScoreBox(HBoxContainer row, string title, Color color)
+    {
+        var box = new PanelContainer { CustomMinimumSize = new Vector2(230, 0), MouseFilter = Control.MouseFilterEnum.Ignore };
+        var style = new StyleBoxFlat
+        {
+            BgColor = new Color(0.04f, 0.08f, 0.18f, 0.95f),
+            BorderColor = color,
+            ShadowColor = new Color(color, 0.35f),
+            ShadowSize = 8,
+            ContentMarginTop = 10, ContentMarginBottom = 10, ContentMarginLeft = 16, ContentMarginRight = 16,
+        };
+        style.SetBorderWidthAll(3);
+        style.SetCornerRadiusAll(16);
+        box.AddThemeStyleboxOverride("panel", style);
+
+        var col = new VBoxContainer { MouseFilter = Control.MouseFilterEnum.Ignore };
+        col.AddThemeConstantOverride("separation", 0);
+        var titleLabel = new Label { Text = title, HorizontalAlignment = HorizontalAlignment.Center };
+        titleLabel.AddThemeFontSizeOverride("font_size", 17);
+        titleLabel.AddThemeColorOverride("font_color", color);
+        var value = new Label { Text = "0", HorizontalAlignment = HorizontalAlignment.Center };
+        value.AddThemeFontSizeOverride("font_size", 46);
+        value.AddThemeColorOverride("font_color", Colors.White);
+        value.AddThemeColorOverride("font_outline_color", new Color(color, 0.6f));
+        value.AddThemeConstantOverride("outline_size", 8);
+        col.AddChild(titleLabel);
+        col.AddChild(value);
+        box.AddChild(col);
+        row.AddChild(box);
+        return value;
     }
 
     private string ChoiceText(int level) => _gm.ChoiceHistory[level] switch

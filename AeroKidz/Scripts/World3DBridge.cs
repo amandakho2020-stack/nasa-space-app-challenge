@@ -38,10 +38,9 @@ public partial class World3DBridge : Node
     };
 
     private readonly Dictionary<OutpostRoom, RoomScreen3D> _screens = new();
+    private FloorArrows3D _arrows;
     private BaseMap _map;
     private Control _mapLayer;
-    private Control _helpBox;
-    private Label _helpLabel;
     private Control _teamPrompt, _teamMinimap;
     private bool _busy = true;
     private bool _firstFrame = true;
@@ -89,6 +88,13 @@ public partial class World3DBridge : Node
             _screens[room] = screen;
         }
 
+        // ---- glowing arrows on the floor towards the goal room ----
+        _arrows = new FloorArrows3D { Name = "AeroFloorArrows" };
+        world.CallDeferred(Node.MethodName.AddChild, _arrows);
+
+        // ---- keep the words on the 3D boards inside their screens ----
+        AddChild(new BoardTextFitter { Name = "BoardTextFitter" });
+
         // ---- 3. back in through the airlock ----
         Team.HubStateChanged += OnHubStateChanged;
 
@@ -111,8 +117,6 @@ public partial class World3DBridge : Node
             _teamPrompt = teamHud.GetNodeOrNull<Control>("PromptLabel");
             _teamMinimap = teamHud.GetNodeOrNull<Control>("Minimap");
         }
-
-        BuildHelpLine();
     }
 
     public override void _ExitTree()
@@ -124,35 +128,6 @@ public partial class World3DBridge : Node
             Team.ExternalControl = false;
             Team.ExternalInputLock = false;
         }
-    }
-
-    // ------------------------------------------------------------------
-    // The help line at the bottom ("GO TO THE OXYGEN ROOM SCREEN - PRESS E")
-    // ------------------------------------------------------------------
-    private void BuildHelpLine()
-    {
-        var layer = new CanvasLayer { Name = "AeroKidzHelp", Layer = 2 };
-        AddChild(layer);
-        var box = new PanelContainer { MouseFilter = Control.MouseFilterEnum.Ignore };
-        var style = new StyleBoxFlat
-        {
-            BgColor = new Color(0.035f, 0.07f, 0.15f, 0.88f),
-            BorderColor = new Color(1f, 0.85f, 0.25f),
-            ContentMarginLeft = 18, ContentMarginRight = 18, ContentMarginTop = 6, ContentMarginBottom = 6,
-        };
-        style.SetBorderWidthAll(2);
-        style.SetCornerRadiusAll(12);
-        box.AddThemeStyleboxOverride("panel", style);
-        layer.AddChild(box); // placed every frame in _Process (bottom centre)
-        _helpLabel = new Label
-        {
-            HorizontalAlignment = HorizontalAlignment.Center,
-            MouseFilter = Control.MouseFilterEnum.Ignore,
-        };
-        _helpLabel.AddThemeFontSizeOverride("font_size", 20);
-        _helpLabel.AddThemeColorOverride("font_color", new Color(1f, 0.9f, 0.35f));
-        box.AddChild(_helpLabel);
-        _helpBox = box;
     }
 
     // ------------------------------------------------------------------
@@ -178,24 +153,23 @@ public partial class World3DBridge : Node
         if (_teamMinimap != null) _teamMinimap.Visible = !busy;
 
         RoomScreen3D.MarkersAllowed = !busy;
+        _arrows.Allowed = !busy;
 
-        _helpLabel.Text = _map.HelpText;
-        _helpBox.Visible = !busy && !string.IsNullOrEmpty(_map.HelpText);
-        if (_helpBox.Visible)
+        // the 3D team's wall boards ("O2 100%  PWR 100%", science) show OUR bars
+        var gm = GameManager.Instance;
+        if (gm != null)
         {
-            // bottom centre: above the LEAVE / SAVE buttons, left of the minimap
-            Vector2 view = _helpBox.GetViewportRect().Size;
-            _helpBox.Size = _helpBox.GetCombinedMinimumSize();
-            _helpBox.Position = new Vector2((view.X - _helpBox.Size.X) / 2f, view.Y - HelpBottomGap - _helpBox.Size.Y);
+            Team.Oxygen = gm.Oxygen;
+            Team.Power = gm.Power;
+            if (Team.SciencePoints != gm.TotalScience) Team.AddScience(gm.TotalScience - Team.SciencePoints);
         }
     }
-
-    private const float HelpBottomGap = 62f;
 
     private void OnGoalChanged(OutpostRoom? goal)
     {
         foreach (var (room, screen) in _screens)
             screen.SetGoal(goal == room);
+        _arrows.SetGoal(goal);
 
         // already inside when "go back inside the base" starts? then it is done straight away
         if (goal == OutpostRoom.Airlock && Team.IsInsideHub && Team.ActiveVehicle == null)

@@ -73,19 +73,34 @@ public partial class RoomScreen3D : Node3D, IInteractable
         _light = new OmniLight3D { Position = new Vector3(0, 1.4f, 0.6f), LightColor = Cyan, LightEnergy = 0.8f, OmniRange = 3.5f };
         AddChild(_light);
 
+        // big, clear room name floating above the screen (always faces you, hidden behind walls)
+        AddChild(new Label3D
+        {
+            Text = BaseMap.RoomName(Room),
+            FontSize = 96,
+            PixelSize = 0.0045f,
+            OutlineSize = 22,
+            Modulate = Colors.White,
+            OutlineModulate = new Color(0.02f, 0.12f, 0.25f),
+            Billboard = BaseMaterial3D.BillboardModeEnum.Enabled,
+            Position = new Vector3(0, 2.35f, 0),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            Layers = 2,
+        });
+
         // "GO HERE" marker: always the same size on screen and visible through walls
         _marker = new Label3D
         {
             Text = "▼ GO HERE ▼\n" + BaseMap.RoomName(Room),
             FontSize = 56,
-            PixelSize = 0.0012f,
+            PixelSize = 0.0015f,
             FixedSize = true,
             NoDepthTest = true,
             Billboard = BaseMaterial3D.BillboardModeEnum.Enabled,
             OutlineSize = 14,
             Modulate = Gold,
             OutlineModulate = new Color(0.25f, 0.12f, 0f),
-            Position = new Vector3(0, 2.6f, 0),
+            Position = new Vector3(0, 3.3f, 0),
             HorizontalAlignment = HorizontalAlignment.Center,
             RenderPriority = 10,
             OutlineRenderPriority = 9,
@@ -121,7 +136,7 @@ public partial class RoomScreen3D : Node3D, IInteractable
         _screenMat.EmissionEnergyMultiplier = pulse;
         _light.LightColor = c;
         _light.LightEnergy = _isGoal ? 1.4f : 0.8f;
-        if (_isGoal) _marker.Position = new Vector3(0, 2.6f + 0.12f * Mathf.Sin(_time * 3f), 0); // gentle bob
+        if (_isGoal) _marker.Position = new Vector3(0, 3.3f + 0.12f * Mathf.Sin(_time * 3f), 0); // gentle bob
     }
 
     // ---- IInteractable (the friend's PlayerController finds the nearest one and shows the prompt) ----

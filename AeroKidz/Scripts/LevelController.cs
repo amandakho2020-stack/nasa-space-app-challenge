@@ -192,9 +192,9 @@ public partial class LevelController : Node
                 {
                     Step.Show("DAY 3", "HARVEST DAY!",
                         "The plants are big and healthy!\nBut you are tired and SLOW.\n\n" +
-                        "• Click to walk.\n• Pick radishes.\n• Drop them in the box.",
+                        "• Click to walk.\n• Pick carrots.\n• Drop them in the box.",
                         "HARVEST!"),
-                    Step.Play(() => new HarvestGame(), "M1: HARVEST THE RADISHES", "Pick the radishes!"),
+                    Step.Play(() => new HarvestGame(), "M1: HARVEST THE CARROTS", "Pick the carrots!"),
                 }
                 : new[]
                 {
@@ -202,9 +202,9 @@ public partial class LevelController : Node
                     Step.Walk(OutpostRoom.Plant, "GO BACK TO THE PLANT ROOM", "Oxygen is full! Back to the plants!"),
                     Step.Show("DAY 3", "HARVEST DAY!",
                         "You are fast!\nBut the plants got little water. Some are small or dry.\n\n" +
-                        "• Click to walk.\n• Pick radishes.\n• Drop them in the box.",
+                        "• Click to walk.\n• Pick carrots.\n• Drop them in the box.",
                         "HARVEST!"),
-                    Step.Play(() => new HarvestGame(), "M1: HARVEST WHAT IS LEFT", "Grab every radish you can!"),
+                    Step.Play(() => new HarvestGame(), "M1: HARVEST WHAT IS LEFT", "Grab every carrot you can!"),
                 },
         },
 
@@ -230,40 +230,43 @@ public partial class LevelController : Node
                 "NASA FACT: The HMR heater (Heat Microbial Reduction) kills germs, but it uses lots of power.",
             OptionA = "TURN ON THE HMR HEATER",
             OptionADesc = $"+{GameManager.M2ScienceMax} points!\nBut power drops to 10%",
-            OptionB = "SAVE POWER",
-            OptionBDesc = $"+{GameManager.M2ScienceLow} points\nPower stays safe",
+            OptionB = "IGNORE THE GERMS",
+            OptionBDesc = $"Power stays safe\nBut dirty water: -{GameManager.M2DirtyWaterPenalty} points",
             OptionAIsScience = true,
-            FinalDay = science => new[]
-            {
-                Step.Show("SCIENCE: PLANETARY PROTECTION", "CLEAN THE WATER!",
-                    (science
-                        ? "The HMR heater killed most germs. A few are left in the water.\nBut power is LOW - move carefully!\n\n"
-                        : "Lots of Earth germs are in the water!\n\n") +
-                    "HMR (Heat Microbial Reduction) = heat kills germs.\nUse the small HMR HEAT PROBE.\n\n" +
-                    "• Move the mouse to steer the heat probe.\n• Heat up ALL the germs before time runs out!\n• The heater uses POWER when it moves.",
-                    "START CLEANING!"),
-                Step.Play(() => new HeatProbeGame(), "M2: CLEAN ALL THE GERMS!", null),
-                BaseMap.WorldMode
-                    // 3D: really drive the rover back and walk in through the airlock
-                    ? Step.Walk(OutpostRoom.Airlock, "DRIVE BACK TO BASE",
-                        "Take the rover back to base. Then walk inside!")
-                    : Step.Play(() => new MoonWalkGame(MoonWalkGame.Route.BackToBase), "WALK BACK TO BASE",
-                        "Let's walk back to base."),
-                science
-                    ? null
-                    : Step.Walk(OutpostRoom.Power, "GO TO THE POWER ROOM",
-                        "Go to the Power Room to refill power!", startAt: OutpostRoom.Airlock),
-                science
-                    ? Step.Show("DAY 6", "LIGHTS OUT!",
+            FinalDay = science => science
+                ? new[]
+                {
+                    // A: HMR heater -> clean the water with the heat probe, then fix the circuit IN THE DARK
+                    Step.Show("SCIENCE: PLANETARY PROTECTION", "CLEAN THE WATER!",
+                        "The HMR heater killed most germs. A few are left in the water.\nBut power is LOW - move carefully!\n\n" +
+                        "HMR (Heat Microbial Reduction) = heat kills germs.\nUse the small HMR HEAT PROBE.\n\n" +
+                        "• Move the mouse to steer the heat probe.\n• Heat up ALL the germs before time runs out!\n• The heater uses POWER when it moves.",
+                        "START CLEANING!"),
+                    Step.Play(() => new HeatProbeGame(), "M2: CLEAN ALL THE GERMS!", null),
+                    BackToBaseStep(),
+                    Step.Show("DAY 6", "LIGHTS OUT!",
                         "A circuit broke!\nIt's too dark to see the wire colors.\n\n" +
                         "• Click a LEFT plug.\n• Then click a RIGHT plug.\n• GREEN light = correct!",
-                        "FIX IT!")
-                    : Step.Show("DAY 6", "BROKEN CIRCUIT!",
-                        "A circuit broke!\n\n" +
+                        "FIX IT!"),
+                    Step.Play(() => new BlindCircuitGame(), "M2: CONNECT THE 3 WIRES", "Connect the wires!"),
+                }
+                : new[]
+                {
+                    // B: ignored the germs -> no heater game, the dirty water costs points, then fix the circuit WITH the lights on
+                    Step.Show("SCIENCE: PLANETARY PROTECTION", $"DIRTY WATER!  -{GameManager.M2DirtyWaterPenalty} POINTS",
+                        "You ignored the germs.\n" +
+                        "Earth germs (BIOBURDEN) are still in the ice water.\n" +
+                        "Dirty water can't be used for science.\n\n" +
+                        $"-{GameManager.M2DirtyWaterPenalty} SCIENCE POINTS\n\n" +
+                        "Now go back to the outpost.",
+                        "OK"),
+                    BackToBaseStep(),
+                    Step.Show("DAY 6", "BROKEN CIRCUIT!",
+                        "A circuit broke!\nThe lights are ON, so you can see the colors.\n\n" +
                         "• Click a LEFT plug.\n• Then click the SAME COLOR on the right.\n• GREEN light = correct!",
                         "FIX IT!"),
-                Step.Play(() => new BlindCircuitGame(), "M2: CONNECT THE 3 WIRES", "Connect the wires!"),
-            },
+                    Step.Play(() => new BlindCircuitGame(), "M2: CONNECT THE 3 WIRES", "Connect the wires!"),
+                },
         },
 
         // ======================= MISSION 3: THE SUN WATCHER (Telescope) =======================
@@ -310,6 +313,11 @@ public partial class LevelController : Node
             },
         },
     };
+
+    /// <summary>Mission 2: back from the drill to the outpost (3D: drive the rover and walk in through the airlock).</summary>
+    private static Step BackToBaseStep() => BaseMap.WorldMode
+        ? Step.Walk(OutpostRoom.Airlock, "DRIVE BACK TO THE OUTPOST", "Take the rover back to the outpost. Then walk inside!")
+        : Step.Play(() => new MoonWalkGame(MoonWalkGame.Route.BackToBase), "WALK BACK TO THE OUTPOST", "Let's walk back to the outpost.");
 
     private static readonly Step[] GoHomeSteps =
     {
@@ -612,6 +620,7 @@ public partial class LevelController : Node
     {
         _walkGoal = null;
         _map.SetGoal(null);
+        EmitSignal(SignalName.NovaSays, "", false); // the walking hint ("go to the ...") is done: remove it
         _stepIndex++;
         RunCurrentStep();
     }
@@ -892,6 +901,7 @@ public partial class LevelController : Node
     {
         CurrentPhase = Phase.Ended;
         ClearMinigame();
+        Gm.RecordFinalScore(Gm.TotalScience); // remember the highest score
         EmitSignal(SignalName.GameBeaten, Gm.TotalScience);
     }
 

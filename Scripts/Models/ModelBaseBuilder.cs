@@ -102,8 +102,9 @@ public partial class ModelBaseBuilder : Node3D
 			new("Solar Station", Models + "Solar station .glb", new Vector3(-86f, 0f, -24f), Vector3.Zero,
 				ModelPlacement.FitMode.None, 1f, ModelPlacement.CollisionMode.Box),
 
-			new("Hallway Kit (Rover Bay annex)", Models + "hallway.glb", new Vector3(26f, 0f, 21f), new Vector3(0, 90, 0),
-				ModelPlacement.FitMode.None, 1f, ModelPlacement.CollisionMode.Box) { UnitScale = 0.01f, Scale = 1.5f },
+			// Removed 2026-11-15 (outdoor hallway next to the Rover Bay was not used):
+			// new("Hallway Kit (Rover Bay annex)", Models + "hallway.glb", new Vector3(26f, 0f, 21f), new Vector3(0, 90, 0),
+			//	ModelPlacement.FitMode.None, 1f, ModelPlacement.CollisionMode.Box) { UnitScale = 0.01f, Scale = 1.5f },
 		};
 
 		// One corridor.glb run per model-corridor tube (EnvironmentBuilder tags them with span metadata).
