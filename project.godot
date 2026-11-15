@@ -15,6 +15,10 @@ run/main_scene="res://Main.tscn"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
+[audio]
+
+general/text_to_speech=true
+
 [autoload]
 
 GameManager="*res://Scripts/GameManager.cs"
@@ -32,6 +36,11 @@ window/stretch/aspect="expand"
 
 project/assembly_name="Nasa Space App Challenge"
 
+[layer_names]
+
+3d_physics/layer_1="world"
+3d_physics/layer_4="camera_blocker"
+
 [physics]
 
 3d/physics_engine="Jolt Physics"
@@ -40,12 +49,3 @@ project/assembly_name="Nasa Space App Challenge"
 
 rendering_device/driver.windows="d3d12"
 lights_and_shadows/directional_shadow/size=8192
-
-[layer_names]
-
-3d_physics/layer_1="world"
-3d_physics/layer_4="camera_blocker"
-
-[audio]
-
-general/text_to_speech=true
