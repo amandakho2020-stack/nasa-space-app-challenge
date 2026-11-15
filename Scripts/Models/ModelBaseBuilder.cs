@@ -508,8 +508,8 @@ public partial class ModelBaseBuilder : Node3D
 
 	/// <summary>Spitzer Space Telescope in the Telescope room: replaces the old ring scanner; E at it = Mission 3.</summary>
 	public static ModelPlacement SpitzerTelescopePlacement() =>
-		new("Spitzer Space Telescope (Mission 3)", Models + "Spitzer Space Telescope.glb", new Vector3(36f, 0.25f, 27.5f), Vector3.Zero,
-			ModelPlacement.FitMode.Height, 3.4f, ModelPlacement.CollisionMode.Box)
+		new("Spitzer Space Telescope (Mission 3)", Models + "spitzer_space_telescope.glb", new Vector3(36f, 0.25f, 27.5f), Vector3.Zero,
+			ModelPlacement.FitMode.Height, 4.2f, ModelPlacement.CollisionMode.Box)
 		{
 			RetireNodes = new[]
 			{
