@@ -319,13 +319,27 @@ public partial class LevelController : Node
         ? Step.Walk(OutpostRoom.Airlock, "DRIVE BACK TO THE OUTPOST", "Take the rover back to the outpost. Then walk inside!")
         : Step.Play(() => new MoonWalkGame(MoonWalkGame.Route.BackToBase), "WALK BACK TO THE OUTPOST", "Let's walk back to the outpost.");
 
-    private static readonly Step[] GoHomeSteps =
-    {
-        Step.Show("ALL 3 MISSIONS DONE!", "TIME TO GO HOME!",
-            "Great job, Commander!\n\nNow walk to the rocket and fly back to Earth!",
-            "TO THE ROCKET!"),
-        Step.Play(() => new RocketLaunchGame(), "RUN TO THE ROCKET!", "Run to the rocket!"),
-    };
+    /// <summary>
+    /// After all 3 missions. 3D world: first WALK out to the Lunar Module on the launch pad and press E
+    /// there (MinigameTrigger3D on the model, room = Rocket), then the launch game. 2D test scene: the
+    /// launch game starts straight away, as before.
+    /// </summary>
+    private static Step[] GoHomeSteps() => BaseMap.WorldMode
+        ? new[]
+        {
+            Step.Show("ALL 3 MISSIONS DONE!", "TIME TO GO HOME!",
+                "Great job, Commander!\n\nWalk out through the airlock to the Lunar Module on the launch pad.\nPress E at its ladder to fly back to Earth!",
+                "TO THE LUNAR MODULE!"),
+            Step.Walk(OutpostRoom.Rocket, "WALK TO THE LUNAR MODULE", "The Lunar Module is waiting on the launch pad. Follow the arrows!"),
+            Step.Play(() => new RocketLaunchGame(), "FLY HOME!", "3, 2, 1... liftoff!"),
+        }
+        : new[]
+        {
+            Step.Show("ALL 3 MISSIONS DONE!", "TIME TO GO HOME!",
+                "Great job, Commander!\n\nNow walk to the rocket and fly back to Earth!",
+                "TO THE ROCKET!"),
+            Step.Play(() => new RocketLaunchGame(), "RUN TO THE ROCKET!", "Run to the rocket!"),
+        };
 
     // ==================================================================
     // GODOT LIFECYCLE
@@ -410,7 +424,7 @@ public partial class LevelController : Node
         {
             // failed on the way to the rocket: just try the walk again
             Gm.ResetLevel();
-            RunSteps(GoHomeSteps);
+            RunSteps(GoHomeSteps());
             return;
         }
         Gm.ResetLevel();
@@ -889,7 +903,7 @@ public partial class LevelController : Node
             DaySlot = HomeSlot;
             CurrentPhase = Phase.Briefing;
             EmitSignal(SignalName.DayStarted, Gm.CurrentDay, "Return to Earth", "");
-            RunSteps(GoHomeSteps);
+            RunSteps(GoHomeSteps());
             return;
         }
 

@@ -40,6 +40,9 @@ public partial class FloorArrows3D : Node3D
         ["RoverBay"] = new(13, 20),        // outside: the rover is parked here
         ["DrillRoad"] = new(13, 186),      // end of the rover road
         ["Drill"] = new(17f, 195.5f),
+        // outside: around the south of the Telescope dome to the Lunar Module on the launch pad (58, 32)
+        ["PadRoad1"] = new(16, 40), ["PadRoad2"] = new(46, 40),
+        ["Rocket"] = new(52.8f, 32f),      // the Lunar Module's ladder (MinigameTrigger3D)
     };
 
     private static readonly (string A, string B)[] Links =
@@ -51,6 +54,7 @@ public partial class FloorArrows3D : Node3D
         ("EastHub", "PlantDoor"), ("PlantDoor", "Plant"),
         ("EastHub", "TelescopeDoor"), ("TelescopeDoor", "Telescope"),
         ("RoverJunction", "Airlock"), ("Airlock", "RoverBay"), ("RoverBay", "DrillRoad"), ("DrillRoad", "Drill"),
+        ("RoverBay", "PadRoad1"), ("PadRoad1", "PadRoad2"), ("PadRoad2", "Rocket"),
     };
 
     private static string PointFor(OutpostRoom room) => room switch
@@ -62,11 +66,15 @@ public partial class FloorArrows3D : Node3D
         OutpostRoom.Telescope => "Telescope",
         OutpostRoom.Drill => "Drill",
         OutpostRoom.Airlock => "Airlock",
+        OutpostRoom.Rocket => "Rocket",
         _ => "Lobby",
     };
 
     /// <summary>Outside the base (the Rover Bay and the road): no ceiling, the ground is uneven.</summary>
-    private static bool IsOutside(Vector2 p) => Mathf.Abs(p.X - 13f) < 6f && p.Y > 10.6f;
+    private static bool IsOutside(Vector2 p) =>
+        (Mathf.Abs(p.X - 13f) < 6f && p.Y > 10.6f)   // Rover Bay + drill road
+        || (p.X > 14f && p.Y >= 30f)                   // path south of the Telescope dome
+        || (p.X > 46f && p.Y > 24f);                   // launch pad
 
     private MultiMeshInstance3D _arrows;
     private OutpostRoom? _goal;

@@ -4,7 +4,8 @@ using System.Collections.Generic;
 namespace AeroKidz;
 
 /// <summary>The places in the outpost. Junction and Airlock are corridor corners, not rooms.</summary>
-public enum OutpostRoom { Hub, Oxygen, Power, Shield, Plant, Drill, Telescope, Junction, Airlock }
+// Rocket = the Lunar Module on the launch pad (3D world only; appended last so saved room numbers keep their meaning).
+public enum OutpostRoom { Hub, Oxygen, Power, Shield, Plant, Drill, Telescope, Junction, Airlock, Rocket }
 
 /// <summary>
 /// THE OUTPOST - a top-down base you really WALK around (laid out like the team's sketch):
@@ -116,7 +117,9 @@ public partial class BaseMap : Control
 
     /// <summary>"CLICK THE X" on the 2D map, "GO TO THE X SCREEN" in 3D.</summary>
     public static string GoText(OutpostRoom room) => WorldMode
-        ? (room == OutpostRoom.Airlock ? "GO BACK INSIDE THE BASE" : $"GO TO THE {RoomName(room)} SCREEN - PRESS E")
+        ? (room == OutpostRoom.Airlock ? "GO BACK INSIDE THE BASE"
+            : room == OutpostRoom.Rocket ? "WALK TO THE LUNAR MODULE - PRESS E"
+            : $"GO TO THE {RoomName(room)} SCREEN - PRESS E")
         : $"CLICK THE {RoomName(room)}";
 
     /// <summary>The free-walk help line.</summary>
@@ -139,6 +142,7 @@ public partial class BaseMap : Control
         OutpostRoom.Plant => "PLANT ROOM",
         OutpostRoom.Drill => "CORE DRILL",
         OutpostRoom.Telescope => "TELESCOPE",
+        OutpostRoom.Rocket => "LUNAR MODULE",
         _ => "MAIN HUB",
     };
 
