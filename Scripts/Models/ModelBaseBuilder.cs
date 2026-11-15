@@ -32,6 +32,8 @@ public partial class ModelBaseBuilder : Node3D
 	private const string HiddenGroup = "model_builder_hidden";
 	private const string MetaLayers = "mb_layers";
 	private const string MetaVisible = "mb_visible";
+	private const string MetaCollisionLayer = "mb_collision_layer";
+	private const string MetaCsgCollision = "mb_csg_collision";
 	private const string MetaIndex = "mb_index";
 
 	/// <summary>Physics layer 4 ("camera_blocker"): only the camera spring arms collide with it.</summary>
@@ -101,6 +103,11 @@ public partial class ModelBaseBuilder : Node3D
 
 			new("Solar Station", Models + "Solar station .glb", new Vector3(-86f, 0f, -24f), Vector3.Zero,
 				ModelPlacement.FitMode.None, 1f, ModelPlacement.CollisionMode.Box),
+
+			// Swapped in 2026-11-15: replaces the old rocket (Base/LaunchPad). Press E at its ladder to fly home.
+			LunarModulePlacement(),
+			// Swapped in 2026-11-15: replaces the old telescope (ring scanner) in the Telescope room. Starts Mission 3.
+			SpitzerTelescopePlacement(),
 
 			// Removed 2026-11-15 (outdoor hallway next to the Rover Bay was not used):
 			// new("Hallway Kit (Rover Bay annex)", Models + "hallway.glb", new Vector3(26f, 0f, 21f), new Vector3(0, 90, 0),
@@ -186,6 +193,11 @@ public partial class ModelBaseBuilder : Node3D
 
 	private bool BuildOne(ModelPlacement p, int index)
 	{
+		if (!ResourceLoader.Exists(p.ScenePath))
+		{
+			GD.PushWarning($"ModelBaseBuilder: {p.Label}: '{p.ScenePath}' is missing or not imported yet - skipped (the old placeholder stays).");
+			return false;
+		}
 		var scene = GD.Load<PackedScene>(p.ScenePath);
 		if (scene == null)
 		{
@@ -279,6 +291,13 @@ public partial class ModelBaseBuilder : Node3D
 				GodotObject.InstanceFromId(id).Set("AnimationName", name);
 			}
 		}
+
+		// Retire the old placeholders this model replaces (hidden + collision off, restorable).
+		foreach (string path in p.RetireNodes ?? Array.Empty<string>())
+			if (_root.GetNodeOrNull(path) is { } old)
+				Retire(old);
+		if (!string.IsNullOrEmpty(p.TriggerRoom))
+			AddTrigger(holder, p);
 
 		// Hide the graybox this model replaces (rendering only; collision stays active).
 		foreach (string path in p.HideNodes ?? Array.Empty<string>())
@@ -397,6 +416,27 @@ public partial class ModelBaseBuilder : Node3D
 		}
 	}
 
+	/// <summary>Hides a replaced placeholder AND switches its collision off (both restored by "Remove Models").</summary>
+	private static void Retire(Node node)
+	{
+		Hide(node);
+		foreach (Node n in Self(node).Concat(Descendants<Node>(node)))
+		{
+			if (n is CollisionObject3D body && !n.HasMeta(MetaCollisionLayer))
+			{
+				n.SetMeta(MetaCollisionLayer, body.CollisionLayer);
+				body.CollisionLayer = 0;
+				n.AddToGroup(HiddenGroup, true);
+			}
+			else if (n is CsgShape3D csg && csg.IsRootShape() && csg.UseCollision)
+			{
+				n.SetMeta(MetaCsgCollision, true);
+				csg.UseCollision = false;
+				n.AddToGroup(HiddenGroup, true);
+			}
+		}
+	}
+
 	private static void Unhide(Node n)
 	{
 		if (n is VisualInstance3D vi && n.HasMeta(MetaLayers))
@@ -409,8 +449,78 @@ public partial class ModelBaseBuilder : Node3D
 			light.Visible = n.GetMeta(MetaVisible).AsBool();
 			n.RemoveMeta(MetaVisible);
 		}
+		if (n is CollisionObject3D body && n.HasMeta(MetaCollisionLayer))
+		{
+			body.CollisionLayer = n.GetMeta(MetaCollisionLayer).AsUInt32();
+			n.RemoveMeta(MetaCollisionLayer);
+		}
+		if (n is CsgShape3D csg && n.HasMeta(MetaCsgCollision))
+		{
+			csg.UseCollision = true;
+			n.RemoveMeta(MetaCsgCollision);
+		}
 		n.RemoveFromGroup(HiddenGroup);
 	}
+
+	/// <summary>
+	/// Adds the interaction point that starts an AeroKidz minigame: an Area3D (MinigameTrigger3D) with a
+	/// sphere CollisionShape3D, at TriggerOffset from the model. Press E there, or walk in when
+	/// TriggerOnEnter is set on the node.
+	/// </summary>
+	private void AddTrigger(Node3D holder, ModelPlacement p)
+	{
+		if (!Enum.TryParse(p.TriggerRoom, true, out AeroKidz.OutpostRoom room))
+		{
+			GD.PushWarning($"ModelBaseBuilder: {p.Label}: unknown TriggerRoom '{p.TriggerRoom}' (use Telescope, Rocket, Plant, Drill, Oxygen, Power or Shield).");
+			return;
+		}
+		var trigger = new AeroKidz.MinigameTrigger3D
+		{
+			Name = "MinigameTrigger",
+			Room = room,
+			Prompt = p.TriggerPrompt ?? "",
+			Position = p.TriggerOffset / Mathf.Max(p.Scale, 0.01f), // the holder is scaled by p.Scale
+			CollisionLayer = 0,  // detects the player; never blocks movement or the camera
+			CollisionMask = 1,
+		};
+		holder.AddChild(trigger);
+		trigger.Owner = _root;
+		var shape = new CollisionShape3D
+		{
+			Name = "TriggerShape",
+			Shape = new SphereShape3D { Radius = p.TriggerRadius },
+			Position = new Vector3(0f, 1f, 0f),
+		};
+		trigger.AddChild(shape);
+		shape.Owner = _root;
+	}
+
+	/// <summary>Apollo 11 Lunar Module on the launch pad: replaces the old rocket; E at its ladder = fly home.</summary>
+	public static ModelPlacement LunarModulePlacement() =>
+		new("Apollo 11 Lunar Module (fly home)", Models + "apollo_11_lunar_module.glb", new Vector3(58f, 0.2f, 32f), Vector3.Zero,
+			ModelPlacement.FitMode.Height, 7.0f, ModelPlacement.CollisionMode.Box)
+		{
+			RetireNodes = new[] { "Base/LaunchPad/Lander", "Base/LaunchPad/RocketLander", "Base/LaunchPad/LanderCollision" },
+			TriggerRoom = "Rocket",
+			TriggerOffset = new Vector3(-5.2f, 0f, 0f), // west side, facing the path from the Rover Bay
+			TriggerRadius = 2.5f,
+		};
+
+	/// <summary>Spitzer Space Telescope in the Telescope room: replaces the old ring scanner; E at it = Mission 3.</summary>
+	public static ModelPlacement SpitzerTelescopePlacement() =>
+		new("Spitzer Space Telescope (Mission 3)", Models + "spitzer_space_telescope.glb", new Vector3(36f, 0.25f, 27.5f), Vector3.Zero,
+			ModelPlacement.FitMode.Height, 4.2f, ModelPlacement.CollisionMode.Box)
+		{
+			RetireNodes = new[]
+			{
+				"Base/Interiors/Telescope/RingScanner", "Base/Interiors/Telescope/PierCollision",
+				"Base/Interiors/Telescope/Pier", "Base/Interiors/Telescope/Mount",
+				"Base/Interiors/Telescope/OpticalTube", "Base/Interiors/Telescope/Aperture",
+			},
+			TriggerRoom = "Telescope",
+			TriggerOffset = new Vector3(0f, 0f, -2.6f), // in front of it, toward the door
+			TriggerRadius = 2.0f,
+		};
 
 	private static void RemoveExcluded(Node3D inst, string[] names, bool hideInstead = false)
 	{

@@ -71,6 +71,25 @@ public partial class ModelPlacement : Resource
 	/// <summary>Node group added to the instance (e.g. "player_model").</summary>
 	[Export] public string Group = "";
 
+	/// <summary>
+	/// Old placeholder nodes this model REPLACES (scene-root relative): hidden AND their collision is
+	/// switched off, so the player doesn't bump into an invisible old rocket. Restored by "Remove Models".
+	/// </summary>
+	[Export] public string[] RetireNodes = System.Array.Empty<string>();
+
+	[ExportGroup("Minigame trigger")]
+	/// <summary>
+	/// AeroKidz room this model opens when the player presses E at it (e.g. "Telescope", "Rocket").
+	/// Empty = no trigger. Creates an Area3D + MinigameTrigger3D child; see Scripts/Models/MinigameTrigger3D.cs.
+	/// </summary>
+	[Export] public string TriggerRoom = "";
+	/// <summary>Where the player stands to use it, relative to the model's position (rotated with it).</summary>
+	[Export] public Vector3 TriggerOffset;
+	/// <summary>Radius of the trigger Area3D (body_entered / body_exited fire inside it).</summary>
+	[Export] public float TriggerRadius = 2.5f;
+	/// <summary>Text shown when the player is close (empty = automatic).</summary>
+	[Export] public string TriggerPrompt = "";
+
 	[ExportGroup("Corridor tiling")]
 	/// <summary>If &gt; 0: copies are laid end to end along local Z and stretched to exactly fill this length (m).</summary>
 	[Export] public float FillLength;

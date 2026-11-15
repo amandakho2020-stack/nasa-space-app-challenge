@@ -38,6 +38,7 @@ public partial class World3DBridge : Node
     };
 
     private readonly Dictionary<OutpostRoom, RoomScreen3D> _screens = new();
+    private readonly List<MinigameTrigger3D> _triggers = new();
     private FloorArrows3D _arrows;
     private BaseMap _map;
     private Control _mapLayer;
@@ -87,6 +88,15 @@ public partial class World3DBridge : Node
             world.CallDeferred(Node.MethodName.AddChild, screen);
             _screens[room] = screen;
         }
+
+        // ---- 2b. 3D models that start a game (MinigameTrigger3D: Lunar Module, telescope, ...) ----
+        // They call the same BaseMap.EnterRoom as the screens, so LevelController and the games are unchanged.
+        foreach (Node n in GetTree().GetNodesInGroup(MinigameTrigger3D.Group))
+            if (n is MinigameTrigger3D trigger)
+            {
+                trigger.Used += r => _map.EnterRoom(r);
+                _triggers.Add(trigger);
+            }
 
         // ---- glowing arrows on the floor towards the goal room ----
         _arrows = new FloorArrows3D { Name = "AeroFloorArrows" };
@@ -169,6 +179,9 @@ public partial class World3DBridge : Node
     {
         foreach (var (room, screen) in _screens)
             screen.SetGoal(goal == room);
+        foreach (var trigger in _triggers)
+            if (IsInstanceValid(trigger))
+                trigger.SetGoal(goal == trigger.Room);
         _arrows.SetGoal(goal);
 
         // already inside when "go back inside the base" starts? then it is done straight away
