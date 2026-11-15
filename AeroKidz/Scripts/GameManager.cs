@@ -160,6 +160,8 @@ public partial class GameManager : Node
         // In the team's 3D outpost (res://Main.tscn) the games run on top of the 3D world.
         // Wait one frame so the main scene is loaded, then let World3DBridge join them.
         GetTree().ProcessFrame += AttachTo3DWorldOnce;
+        // ...and every time a scene is loaded later (MainMenu -> intro video -> Main.tscn, or back after the outro).
+        GetTree().SceneChanged += () => World3DBridge.AttachIfNeeded(GetTree());
     }
 
     private void AttachTo3DWorldOnce()

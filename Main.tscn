@@ -112,6 +112,8 @@
 [ext_resource type="PackedScene" path="res://Art/models/apollo_11_lunar_module.glb" id="110_xbxht"]
 [ext_resource type="Script" path="res://Scripts/Models/MinigameTrigger3D.cs" id="111_cptku"]
 [ext_resource type="PackedScene" path="res://Art/models/spitzer_space_telescope.glb" id="112_cptku"]
+[ext_resource type="Script" path="res://Scripts/Flow/OutroVideo.cs" id="113_yaiuy"]
+[ext_resource type="VideoStream" path="res://Art/Moon to Earth.ogv" id="114_ucq2w"]
 
 [sub_resource type="Resource" id="Resource_vybqf"]
 script = ExtResource("4_xbxht")
@@ -14508,6 +14510,44 @@ script = ExtResource("111_cptku")
 [node name="TriggerShape" type="CollisionShape3D" parent="Model_20_Spitzer_Space_Telescope__Mission_3_/MinigameTrigger" unique_id=693904961]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("SphereShape3D_2l42k")
+
+[node name="OutroVideo" type="CanvasLayer" parent="." unique_id=1136558131]
+process_mode = 3
+layer = 100
+visible = false
+script = ExtResource("113_yaiuy")
+
+[node name="Backdrop" type="ColorRect" parent="OutroVideo" unique_id=688775313]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 1)
+
+[node name="Player" type="VideoStreamPlayer" parent="OutroVideo" unique_id=1300148059]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+stream = ExtResource("114_ucq2w")
+expand = true
+
+[node name="SkipHint" type="Label" parent="OutroVideo" unique_id=1264084888]
+visible = false
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -320.0
+offset_top = -56.0
+offset_right = -24.0
+offset_bottom = -20.0
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(1, 1, 1, 0.75)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+text = "Press SPACE to skip"
+horizontal_alignment = 2
 
 [editable path="Player/Visual/Model_00_Astronaut__player_/Fit/Model"]
 [editable path="LunarRover/Model_01_Lunar_Rover/Fit/Model"]
