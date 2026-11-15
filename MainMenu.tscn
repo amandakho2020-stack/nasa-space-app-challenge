@@ -1,0 +1,142 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/Flow/MainMenu.cs" id="1_menu"]
+[ext_resource type="Texture2D" path="res://Art/AeroKidz_Mainmenu.jpg" id="2_bg"]
+[ext_resource type="VideoStream" path="res://Art/Earth to moon.ogv" id="3_intro"]
+
+[sub_resource type="StyleBoxEmpty" id="start_normal"]
+
+[sub_resource type="StyleBoxFlat" id="start_hover"]
+bg_color = Color(1, 1, 1, 0.12)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 0.9, 0.4, 0.9)
+corner_radius_top_left = 26
+corner_radius_top_right = 26
+corner_radius_bottom_right = 26
+corner_radius_bottom_left = 26
+shadow_color = Color(1, 0.75, 0.2, 0.45)
+shadow_size = 14
+
+[sub_resource type="StyleBoxFlat" id="start_pressed"]
+bg_color = Color(0, 0, 0, 0.18)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 0.9, 0.4, 1)
+corner_radius_top_left = 26
+corner_radius_top_right = 26
+corner_radius_bottom_right = 26
+corner_radius_bottom_left = 26
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_menu")
+
+[node name="Black" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Background" type="TextureRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="MenuUI" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="StartButton" type="Button" parent="MenuUI"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 400.0
+offset_top = 560.0
+offset_right = 880.0
+offset_bottom = 690.0
+tooltip_text = "Start the mission"
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("start_normal")
+theme_override_styles/hover = SubResource("start_hover")
+theme_override_styles/pressed = SubResource("start_pressed")
+theme_override_styles/focus = SubResource("start_normal")
+flat = true
+
+[node name="ScoreLabel" type="Label" parent="MenuUI"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -360.0
+offset_top = 20.0
+offset_right = -24.0
+offset_bottom = 90.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(1, 0.9, 0.35, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.05, 0.2, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 2
+
+[node name="IntroPlayer" type="VideoStreamPlayer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+stream = ExtResource("3_intro")
+expand = true
+
+[node name="SkipHint" type="Label" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -320.0
+offset_top = -56.0
+offset_right = -24.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 0.75)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 20
+text = "Press SPACE to skip"
+horizontal_alignment = 2

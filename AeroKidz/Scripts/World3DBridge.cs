@@ -79,6 +79,13 @@ public partial class World3DBridge : Node
         ui.GetNode<Control>("HUD").MouseFilter = Control.MouseFilterEnum.Ignore;
         _map.GoalChanged += OnGoalChanged;
 
+        // ---- the end: rocket landed -> outro video ("Moon to Earth") -> back to the main menu ----
+        game.GetNode<LevelController>("LevelController").GameBeaten += score =>
+        {
+            global::GameFlow.LastFinalScore = score;
+            global::OutroVideo.Play(this);
+        };
+
         // ---- 2. a screen in every room ----
         var world = GetParent<Node3D>();
         foreach (var (room, pos, face) in Screens)
